@@ -45,10 +45,7 @@ app.*.map.json
 android/app/google-services.json
 macos/firebase_app_id_file.json
 macos/Runner/GoogleService-Info.plist
-macos/Runner/GoogleService-Info.plist
 *.plist
 ios/firebase_app_id_file.json
-.flutter-plugins
-.flutter-plugins-dependencies
 lib/firebase_options.dart
 linux/flutter/generated_plugin_registrant.cc
