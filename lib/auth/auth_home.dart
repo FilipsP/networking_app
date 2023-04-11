@@ -11,18 +11,26 @@ class AuthHome extends StatefulWidget {
 }
 
 class _AuthHomeState extends State<AuthHome> {
-  final User? _user = Auth().currentUser;
+  User? _user = Auth().currentUser;
+
+  _isAuth() {
+    setState(() {
+      _user = Auth().currentUser;
+    });
+  }
 
   Future<void> _handleAuthClick() async {
     await Auth().signInAnonymously();
+    _isAuth();
   }
 
   Future<void> _handleSignOutClick() async {
     await Auth().signOut();
+    _isAuth();
   }
 
   Widget userUid() {
-    return Text(_user?.email ?? "No email");
+    return Text(_user == null ? "Not signed in" : _user?.email ?? "Anonymous");
   }
 
   Widget contextButton() {
@@ -39,7 +47,7 @@ class _AuthHomeState extends State<AuthHome> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (_user != null) userUid(),
+            userUid(),
             contextButton(),
           ],
         ),
