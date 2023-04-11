@@ -35,8 +35,9 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final User? _user = Auth().currentUser;
+  User? _user = Auth().currentUser;
   int _selectedIndex = 0;
+
   final List<Widget> _widgetOptions = <Widget>[
     //Done components go here
     const Text(
@@ -53,17 +54,25 @@ class _HomeState extends State<Home> {
         color: Colors.black,
       ),
     ),
-    const Text(
-      'Index 2: Profile',
-      style: TextStyle(
-        fontSize: 24,
-        color: Colors.black,
-      ),
-    ),
+    AuthHome(),
   ];
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _listenForAuth();
+  }
+
+  void _listenForAuth() {
+    Auth().authStateChanges.listen((User? user) {
+      setState(() {
+        _user = user;
+      });
     });
   }
 
@@ -78,11 +87,15 @@ class _HomeState extends State<Home> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildBody() {
     if (_user == null) {
       return AuthHome();
     }
+    return _widgetOptions.elementAt(_selectedIndex);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -93,7 +106,7 @@ class _HomeState extends State<Home> {
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-        child: _widgetOptions.elementAt(_selectedIndex),
+        child: _buildBody(),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
