@@ -1,16 +1,18 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import 'auth.dart';
+import '../auth.dart';
 
 class LoginRegister extends StatefulWidget {
+  const LoginRegister({super.key});
+
   @override
-  _LoginRegisterState createState() => _LoginRegisterState();
+  LoginRegisterState createState() => LoginRegisterState();
 }
 
-class _LoginRegisterState extends State<LoginRegister> {
+class LoginRegisterState extends State<LoginRegister> {
   String? _errorMessage;
-  bool? _isLogin = true;
+  final bool _isLogin = true;
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -48,7 +50,7 @@ class _LoginRegisterState extends State<LoginRegister> {
     return TextField(
       controller: controller,
       decoration: InputDecoration(
-        border: OutlineInputBorder(),
+        border: const OutlineInputBorder(),
         labelText: title,
       ),
     );
@@ -60,10 +62,10 @@ class _LoginRegisterState extends State<LoginRegister> {
 
   Widget _submitButton() {
     return ElevatedButton(
-      onPressed: _isLogin!
+      onPressed: _isLogin
           ? _signInWithEmailAndPassword
           : _createUserWithEmailAndPassword,
-      child: Text(_isLogin! ? "Login" : "Register"),
+      child: Text(_isLogin ? "Login" : "Register"),
     );
   }
 
