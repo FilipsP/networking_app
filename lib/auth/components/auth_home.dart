@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import 'auth.dart';
+import '../auth.dart';
 
 class AuthHome extends StatefulWidget {
-  AuthHome({super.key});
+  const AuthHome({super.key});
 
   @override
   State<AuthHome> createState() => _AuthHomeState();
