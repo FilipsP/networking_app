@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:networking_app/auth/auth_home.dart';
 import 'auth/auth.dart';
 import 'firebase_options.dart';
+import 'pages/feed.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,13 +41,8 @@ class _HomeState extends State<Home> {
 
   final List<Widget> _widgetOptions = <Widget>[
     //Done components go here
-    const Text(
-      'Index 0: Feed',
-      style: TextStyle(
-        fontSize: 24,
-        color: Colors.black,
-      ),
-    ),
+    const Feed(),
+
     const Text(
       'Index 1: Friends',
       style: TextStyle(
