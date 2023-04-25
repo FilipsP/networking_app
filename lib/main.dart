@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:networking_app/auth/auth_home.dart';
 import 'auth/auth.dart';
 import 'firebase_options.dart';
+import 'profile.dart';
+import 'user_profile.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -54,6 +56,7 @@ class _HomeState extends State<Home> {
         color: Colors.black,
       ),
     ),
+    Profile(),
     AuthHome(),
   ];
   void _onItemTapped(int index) {
