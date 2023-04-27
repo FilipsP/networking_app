@@ -5,6 +5,8 @@ import 'package:networking_app/auth/components/auth_home.dart';
 import 'auth/auth.dart';
 import 'db/notes_demo_page.dart';
 import 'firebase_options.dart';
+import 'pages/feed.dart';
+import 'pages/friends.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,14 +42,9 @@ class _HomeState extends State<Home> {
 
   final List<Widget> _widgetOptions = <Widget>[
     //Done components go here
-    const NotesDemoPage(),
-    const Text(
-      'Index 1: Friends',
-      style: TextStyle(
-        fontSize: 24,
-        color: Colors.black,
-      ),
-    ),
+    //const NotesDemoPage(),
+    const Feed(),
+    const Friends(),
     const AuthHome(),
   ];
   void _onItemTapped(int index) {
