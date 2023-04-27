@@ -70,15 +70,33 @@ class _HomeState extends State<Home> {
     });
   }
 
-  //TODO: implement the title change
   Widget _title() {
-    return const Text(
-      'Networking App',
-      style: TextStyle(
+    if (_user == null) {
+      return const Text(
+        'Networking App',
+        style: TextStyle(
+          fontSize: 30,
+          color: Colors.black,
+        ),
+      );
+    }
+    return Text(
+      _titleString(),
+      style: const TextStyle(
         fontSize: 24,
         color: Colors.black,
       ),
     );
+  }
+
+  String _titleString() {
+    if (_selectedIndex == 1) {
+      return 'Friends';
+    }
+    if (_selectedIndex == 2) {
+      return 'Profile';
+    }
+    return 'Feed';
   }
 
   Widget _buildBody() {
