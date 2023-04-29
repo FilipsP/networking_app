@@ -106,7 +106,7 @@ class _FeedState extends State<Feed> {
         itemCount: posts.length,
         itemBuilder: (context, index) {
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Card(
               elevation: 2,
               shape: RoundedRectangleBorder(

@@ -7,6 +7,7 @@ import 'db/notes_demo_page.dart';
 import 'firebase_options.dart';
 import 'pages/feed.dart';
 import 'pages/friends.dart';
+import 'pages/profile.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,6 +46,7 @@ class _HomeState extends State<Home> {
     //const NotesDemoPage(),
     const Feed(),
     const Friends(),
+    const Profile(),
     const AuthHome(),
   ];
   void _onItemTapped(int index) {
@@ -67,7 +69,6 @@ class _HomeState extends State<Home> {
     });
   }
 
-  //TODO: implement the title change
   Widget _title() {
     return const Text(
       'Networking App',
