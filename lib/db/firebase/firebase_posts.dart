@@ -72,9 +72,7 @@ class _FirebasePostsState extends State<FirebasePosts> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                            //Todo: fix spaghetti code
-                            _getLikes(post['likes']),
+                        Text(_getLikes(post['likes']),
                             style: const TextStyle(fontSize: 15)),
                         Text(_formatTime(post['time']),
                             style: const TextStyle(fontSize: 12),
