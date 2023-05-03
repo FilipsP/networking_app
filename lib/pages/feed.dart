@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:networking_app/components/search_bar.dart';
+import 'package:networking_app/pages/create_post.dart';
 
 class Feed extends StatefulWidget {
   const Feed({Key? key}) : super(key: key);
@@ -54,7 +55,14 @@ class _FeedState extends State<Feed> {
   // * Floating Action Button to create a new post
   Widget _createPostButton() {
     return FloatingActionButton(
-      onPressed: () {},
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const CreatePost(),
+          ),
+        );
+      },
       child: const Icon(Icons.edit),
     );
   }
