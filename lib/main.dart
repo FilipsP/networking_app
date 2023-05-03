@@ -22,7 +22,6 @@ class App extends StatelessWidget {
         title: 'Flutter Demo',
         theme: ThemeData(
           useMaterial3: true,
-          primarySwatch: Colors.blue,
         ),
         home: const Home());
   }
@@ -134,7 +133,7 @@ class _HomeState extends State<Home> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.primaries[0],
+        selectedItemColor: Colors.deepPurple,
         onTap: _onItemTapped,
       ),
       // This trailing comma makes auto-formatting nicer for build methods.
