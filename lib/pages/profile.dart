@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../auth/components/auth_home.dart';
+
 class Profile extends StatefulWidget {
   const Profile({super.key});
 
@@ -125,6 +127,7 @@ class _ProfileState extends State<Profile> {
                 _userName(),
                 _settingsButton(),
                 _bioCard(),
+                const AuthHome(),
               ],
             ),
           ),
