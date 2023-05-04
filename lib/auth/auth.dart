@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:firebase_auth/firebase_auth.dart';
 
 class Auth {
@@ -11,13 +13,35 @@ class Auth {
     userCredential = await FirebaseAuth.instance.signInAnonymously();
   }
 
+  Future<void> _delete() async {
+    await _firebaseAuth.currentUser?.delete();
+  }
+
+  Future<void> handleSignIn(
+      {required String email, required String password}) async {
+    if (currentUser?.isAnonymous == true) {
+      final credential =
+          EmailAuthProvider.credential(email: email, password: password);
+      await _delete();
+      await signInWithCredential(credential);
+    } else {
+      signInWithEmailAndPassword(email: email, password: password);
+    }
+  }
+
   Future<void> signInWithEmailAndPassword({
     required String email,
     required String password,
   }) async {
-    await _firebaseAuth.signInWithEmailAndPassword(
+    userCredential = await _firebaseAuth.signInWithEmailAndPassword(
       email: email,
       password: password,
+    );
+  }
+
+  Future<void> signInWithCredential(credential) async {
+    userCredential = await _firebaseAuth.signInWithCredential(
+      credential,
     );
   }
 
@@ -32,6 +56,27 @@ class Auth {
   }
 
   Future<void> signOut() async {
+    if (currentUser?.isAnonymous == true) {
+      await _delete();
+    }
     await _firebaseAuth.signOut();
+  }
+
+  Future<void> sendPasswordResetEmail({
+    required String email,
+  }) async {
+    await _firebaseAuth.sendPasswordResetEmail(
+      email: email,
+    );
+  }
+
+  Future<void> confirmPasswordReset({
+    required String code,
+    required String newPassword,
+  }) async {
+    await _firebaseAuth.confirmPasswordReset(
+      code: code,
+      newPassword: newPassword,
+    );
   }
 }

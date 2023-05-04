@@ -46,7 +46,6 @@ class _HomeState extends State<Home> {
     const Feed(),
     const Friends(),
     const Profile(),
-    const AuthHome(),
   ];
   void _onItemTapped(int index) {
     setState(() {
