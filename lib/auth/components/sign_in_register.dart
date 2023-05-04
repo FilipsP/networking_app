@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
 import '../auth.dart';
 
 class SignInRegister extends StatefulWidget {
@@ -15,9 +14,9 @@ class SignInRegisterState extends State<SignInRegister> {
   String _title = "Sign In";
   bool _isEmailValid = false;
   bool _isPasswordValid = false;
-  String? _errorMessage;
+  String _errorMessage = "";
   //used to toggle between sign in and register
-  bool _isSignInPage = false;
+  String pageState = 'sign in';
   bool _isTextObscured = true;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -43,14 +42,26 @@ class SignInRegisterState extends State<SignInRegister> {
 
   _resetErrorMessage() {
     setState(() {
-      _errorMessage = null;
+      _errorMessage = "";
     });
   }
 
   _setTitle() {
     setState(() {
-      _title = _isSignInPage ? "Sign In" : "Register";
+      if (pageState == 'sign in') {
+        _title = 'Sign In';
+      }
+      if (pageState == 'register') {
+        _title = 'Register';
+      }
+      if (pageState == 'reset password') {
+        _title = 'Reset Password';
+      }
     });
+  }
+
+  _leaveSignInRegister() {
+    Navigator.pop(context);
   }
 
   Future<void> _signInWithEmailAndPassword() async {
@@ -58,10 +69,11 @@ class SignInRegisterState extends State<SignInRegister> {
       return;
     }
     try {
-      await Auth().signInWithEmailAndPassword(
+      await Auth().handleSignIn(
         email: _emailController.text,
         password: _passwordController.text,
       );
+      _leaveSignInRegister();
     } on FirebaseAuthException catch (e) {
       _handleFirebaseError(e);
     }
@@ -77,7 +89,23 @@ class SignInRegisterState extends State<SignInRegister> {
         password: _passwordController.text,
       );
       setState(() {
-        _isSignInPage = true;
+        pageState = 'sign in';
+      });
+      _setTitle();
+      _resetErrorMessage();
+    } on FirebaseAuthException catch (e) {
+      _handleFirebaseError(e);
+    }
+  }
+
+  Future<void> _sendPasswordResetEmail() async {
+    if (!_isEmailValid) {
+      return;
+    }
+    try {
+      await Auth().sendPasswordResetEmail(email: _emailController.text);
+      setState(() {
+        pageState = 'sign in';
       });
       _setTitle();
       _resetErrorMessage();
@@ -124,10 +152,32 @@ class SignInRegisterState extends State<SignInRegister> {
     return null;
   }
 
+  void _handleSubmitButtonClick() {
+    if (pageState == 'sign in') {
+      _signInWithEmailAndPassword();
+    }
+    if (pageState == 'register') {
+      _createUserWithEmailAndPassword();
+    }
+    if (pageState == 'reset password') {
+      _sendPasswordResetEmail();
+    }
+  }
+
+  void _setPageState(String state) {
+    setState(() {
+      pageState = state;
+    });
+  }
+
+  bool _isPasswordEntryFieldEnabled() {
+    return pageState == 'sign in' || pageState == 'register';
+  }
+
   Widget _passwordEntryField() {
     return TextFormField(
       onChanged: (value) {
-        if (_errorMessage != null) {
+        if (_errorMessage != "") {
           _resetErrorMessage();
         }
         if (!_isTextObscured) {
@@ -136,6 +186,7 @@ class SignInRegisterState extends State<SignInRegister> {
           });
         }
       },
+      enabled: _isPasswordEntryFieldEnabled(),
       controller: _passwordController,
       obscureText: _isTextObscured,
       validator: _passwordValidator,
@@ -157,30 +208,47 @@ class SignInRegisterState extends State<SignInRegister> {
   }
 
   Widget _errorMessageWidget() {
-    return Text(_errorMessage ?? "", style: TextStyle(color: Colors.red[900]));
+    return Text(_errorMessage, style: TextStyle(color: Colors.red[900]));
   }
 
   Widget _submitButton() {
     return ElevatedButton(
-      onPressed: _isSignInPage
-          ? _signInWithEmailAndPassword
-          : _createUserWithEmailAndPassword,
-      child: Text(_isSignInPage ? "Sign in" : "Register"),
+      onPressed: _handleSubmitButtonClick,
+      child: Text(_title),
+    );
+  }
+
+  Widget _passwordLostPrompt() {
+    if (pageState == 'reset password' || pageState == 'register') {
+      return const SizedBox.shrink();
+    }
+    return TextButton(
+      child: const Text("Forgot password?"),
+      onPressed: () => setState(() {
+        pageState = 'reset password';
+        _passwordController.clear();
+        _setTitle();
+        _resetErrorMessage();
+      }),
     );
   }
 
   Widget _pageSwitchTextButton() {
     return TextButton(
       onPressed: () {
-        setState(() {
-          _isSignInPage = !_isSignInPage;
-        });
+        if (pageState == 'sign in') {
+          _setPageState('register');
+        } else {
+          _setPageState('sign in');
+        }
         _setTitle();
         _resetErrorMessage();
       },
-      child: Text(_isSignInPage
-          ? "Don't have an account? Register"
-          : "Already have an account? Sign in"),
+      child: Text(
+        pageState == 'sign in'
+            ? 'Don\'t have an account? Register'
+            : 'Already have an account? Sign in',
+      ),
     );
   }
 
@@ -198,6 +266,7 @@ class SignInRegisterState extends State<SignInRegister> {
             _errorMessageWidget(),
             _submitButton(),
             const SizedBox(height: 10),
+            _passwordLostPrompt(),
             _pageSwitchTextButton(),
           ]),
         ),
