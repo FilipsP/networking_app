@@ -7,21 +7,18 @@ class Profile extends StatefulWidget {
   State<Profile> createState() => _ProfileState();
 }
 
-class Person {
-  // for testing without firebase
+class Person { // for testing without firebase
   late String name;
   late int profileImg; // selection from db
-  //late String bio;
+  String? bio; // displays null
 
-  Person(this.name, this.profileImg);
+  Person(this.name, this.profileImg, this.bio);
 }
+var person = Person('John Doe', 2, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sit amet ante sem. Proin venenatis sodales erat non faucibus. Nullam eleifend diam nec ipsum venenatis, ut porttitor quam faucibus. In hac habitasse platea dictumst.');
 
-// 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sit amet ante sem. Proin venenatis sodales erat non faucibus. Nullam eleifend diam nec ipsum venenatis, ut porttitor quam faucibus. In hac habitasse platea dictumst.'
-var person = Person('John Doe', 2);
+TextEditingController _controller = TextEditingController(text: '${person.bio}');
 
 class _ProfileState extends State<Profile> {
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,7 +52,9 @@ class _ProfileState extends State<Profile> {
                 IconButton(
                   icon: const Icon(Icons.settings),
                   color: Colors.black,
-                  onPressed: () {}, // edit profile img and bio (open window on top to change?)
+                  onPressed: () {
+                    
+                  }, // edit profile img and bio (open window on top to change?)
                 ),
               ],
             ),
@@ -86,7 +85,7 @@ class _ProfileState extends State<Profile> {
                     ),
                     Padding(
                       padding: EdgeInsets.fromLTRB(15, 5, 15, 15),
-                      child: Text('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sit amet ante sem. Proin venenatis sodales erat non faucibus. Nullam eleifend diam nec ipsum venenatis, ut porttitor quam faucibus. In hac habitasse platea dictumst.'), // Text('person.bio')
+                      child: Text('${person.bio}'),
                     ),
                   ],
                 ),
