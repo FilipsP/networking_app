@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:networking_app/db/firebase/controllers/firebase_user_controller.dart';
 
 class Auth {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -25,7 +26,7 @@ class Auth {
       await _delete();
       await signInWithCredential(credential);
     } else {
-      signInWithEmailAndPassword(email: email, password: password);
+      await signInWithEmailAndPassword(email: email, password: password);
     }
   }
 
@@ -49,9 +50,13 @@ class Auth {
     required String email,
     required String password,
   }) async {
-    await _firebaseAuth.createUserWithEmailAndPassword(
+    userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
       email: email,
       password: password,
+    );
+    await FirebaseUserController().writeNewUser(
+      uid: userCredential.user!.uid,
+      email: userCredential.user!.email ?? '',
     );
   }
 
