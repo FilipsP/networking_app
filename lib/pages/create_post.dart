@@ -2,71 +2,8 @@
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-
-// Multi Select widget
-// This widget is reusable
-class MultiSelect extends StatefulWidget {
-  final List<String> items;
-  const MultiSelect({Key? key, required this.items}) : super(key: key);
-
-  @override
-  State<StatefulWidget> createState() => _MultiSelectState();
-}
-
-class _MultiSelectState extends State<MultiSelect> {
-  // this variable holds the selected items
-  final List<String> _selectedItems = [];
-
-// This function is triggered when a checkbox is checked or unchecked
-  void _itemChange(String itemValue, bool isSelected) {
-    setState(() {
-      if (isSelected) {
-        _selectedItems.add(itemValue);
-      } else {
-        _selectedItems.remove(itemValue);
-      }
-    });
-  }
-
-  // this function is called when the Cancel button is pressed
-  void _cancel() {
-    Navigator.pop(context);
-  }
-
-// this function is called when the Submit button is tapped
-  void _submit() {
-    Navigator.pop(context, _selectedItems);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('cool tags'),
-      content: SingleChildScrollView(
-        child: ListBody(
-          children: widget.items
-              .map((item) => CheckboxListTile(
-                    value: _selectedItems.contains(item),
-                    title: Text(item),
-                    controlAffinity: ListTileControlAffinity.leading,
-                    onChanged: (isChecked) => _itemChange(item, isChecked!),
-                  ))
-              .toList(),
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: _cancel,
-          child: const Text('Cancel'),
-        ),
-        ElevatedButton(
-          onPressed: _submit,
-          child: const Text('Submit'),
-        ),
-      ],
-    );
-  }
-}
+import 'package:networking_app/components/multi_select_from_db.dart';
+import 'package:networking_app/db/firebase/controllers/firebase_posts_controller.dart';
 
 // Implement a multi select on the Home screen
 class CreatePost extends StatefulWidget {
@@ -78,28 +15,16 @@ class CreatePost extends StatefulWidget {
 
 class _CreatePostState extends State<CreatePost> {
   List<String> _selectedItems = [];
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _contentController = TextEditingController();
+  DateTime _dateTime = DateTime.now();
+  String _errorMessage = '';
 
   void _showMultiSelect() async {
-    // these items can be hard-coded or dynamically fetched from a database/API
-    final List<String> items = [
-      'Informaatika',
-      'Node.js',
-      'React Native',
-      'Java',
-      'Andmebaasid',
-      'MySQL',
-      'xd',
-      'BFM'
-          '1',
-      '2',
-      '3,',
-      '4',
-    ];
-
     final List<String>? results = await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return MultiSelect(items: items);
+        return const MultiSelectFromDB(dbKey: 'tags');
       },
     );
 
@@ -140,97 +65,146 @@ class _CreatePostState extends State<CreatePost> {
 
     TimeOfDay? time = await _showTimePicker();
     if (time == null) return;
+    _dateTime = DateTime(
+      date.year,
+      date.month,
+      date.day,
+      time.hour,
+      time.minute,
+    );
+  }
+
+  void _writePost() async {
+    if (_titleController.text.isEmpty) {
+      setState(() {
+        _errorMessage = 'Please select a title';
+      });
+      return;
+    }
+    if (_contentController.text.isEmpty) {
+      setState(() {
+        _errorMessage = 'Please be sure to write something and be nice ;)';
+      });
+      return;
+    }
+    await FirebasePostsController().writeNewPost(
+      title: _titleController.text,
+      body: _contentController.text,
+      tags: _selectedItems,
+      eventTime: _dateTime.millisecondsSinceEpoch,
+    );
+  }
+
+  Widget _buildCreatePostContainer() {
+    return Container(
+        margin: const EdgeInsets.symmetric(vertical: 40),
+        alignment: Alignment.center,
+        child: Column(children: [
+          if (_errorMessage.isNotEmpty)
+            Text(
+              _errorMessage,
+              style: const TextStyle(color: Colors.red),
+            ),
+          ElevatedButton.icon(
+            onPressed: _writePost,
+            icon: const Icon(Icons.check),
+            label: const Text('Create Post'),
+          ),
+        ]));
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Create Post'),
-        ),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(
-                height: 16,
-              ),
-              TextField(
-                decoration: InputDecoration(
-                  labelText: "Title",
-                  hintText: 'Input',
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(11),
-                      borderSide:
-                          const BorderSide(color: Colors.green, width: 2)),
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(11),
-                      borderSide:
-                          const BorderSide(color: Colors.black, width: 2)),
-                  disabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(11),
-                      borderSide:
-                          const BorderSide(color: Colors.blueAccent, width: 2)),
-                ),
-              ),
-              Container(
-                height: 14,
-              ),
-              TextField(
-                minLines: 2,
-                maxLines: 5,
-                keyboardType: TextInputType.multiline,
-                decoration: InputDecoration(
-                  labelText: 'Content',
-                  hintText: 'Input',
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(11),
-                      borderSide:
-                          const BorderSide(color: Colors.green, width: 2)),
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(11),
-                      borderSide:
-                          const BorderSide(color: Colors.black, width: 2)),
-                  disabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(11),
-                      borderSide:
-                          const BorderSide(color: Colors.blueAccent, width: 2)),
-                ),
-              ),
-              Container(
-                height: 14,
-              ),
-              ElevatedButton(
-                onPressed: _showMultiSelect,
-                child: const Text('+ Add tags'),
-              ),
-              // display selected items
-              Wrap(
-                children: _selectedItems
-                    .map((e) => Chip(
-                          label: Text(e),
-                        ))
-                    .toList(),
-              ),
-              Container(
-                height: 14,
-              ),
-              ElevatedButton(
-                onPressed: selectFile,
-                child: const Text('+ Add File'),
-              ),
-              Container(
-                height: 14,
-              ),
-              ElevatedButton(
-                  onPressed: dateAndTime, child: const Text('+ Add Date&Time')),
-            ],
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text('Create Post'),
           ),
-        ),
-      ),
-    );
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  height: 16,
+                ),
+                TextField(
+                  controller: _titleController,
+                  decoration: InputDecoration(
+                    labelText: "Title",
+                    focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(11),
+                        borderSide:
+                            const BorderSide(color: Colors.green, width: 2)),
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(11),
+                        borderSide:
+                            const BorderSide(color: Colors.black, width: 2)),
+                    disabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(11),
+                        borderSide: const BorderSide(
+                            color: Colors.blueAccent, width: 2)),
+                  ),
+                ),
+                Container(
+                  height: 14,
+                ),
+                TextField(
+                  controller: _contentController,
+                  minLines: 2,
+                  maxLines: 5,
+                  keyboardType: TextInputType.multiline,
+                  decoration: InputDecoration(
+                    labelText: 'Content',
+                    focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(11),
+                        borderSide:
+                            const BorderSide(color: Colors.green, width: 2)),
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(11),
+                        borderSide:
+                            const BorderSide(color: Colors.black, width: 2)),
+                    disabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(11),
+                        borderSide: const BorderSide(
+                            color: Colors.blueAccent, width: 2)),
+                  ),
+                ),
+                Container(
+                  height: 14,
+                ),
+                ElevatedButton(
+                  onPressed: _showMultiSelect,
+                  child: const Text('+ Add tags'),
+                ),
+                // display selected items
+                Wrap(
+                  spacing: 5,
+                  runSpacing: 5,
+                  children: _selectedItems
+                      .map((e) => Chip(
+                            label: Text(e),
+                          ))
+                      .toList(),
+                ),
+                Container(
+                  height: 14,
+                ),
+                ElevatedButton(
+                  onPressed: selectFile,
+                  child: const Text('+ Add File'),
+                ),
+                Container(
+                  height: 14,
+                ),
+                ElevatedButton(
+                    onPressed: dateAndTime,
+                    child: const Text('+ Add Date&Time')),
+                _buildCreatePostContainer(),
+              ],
+            ),
+          ),
+        ));
   }
 }
