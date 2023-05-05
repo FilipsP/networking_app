@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/components/settings.dart';
 
 import '../auth/components/auth_home.dart';
 
@@ -57,8 +58,9 @@ class _ProfileState extends State<Profile> {
           icon: const Icon(Icons.settings),
           color: Colors.black,
           iconSize: 30,
-          onPressed:
-              () {}, // edit profile img and bio (open window on top to change?)
+          onPressed: () {
+            Navigator.of(context).restorablePush(_dialogBuilder);
+          },
         ),
       ],
     );
@@ -111,6 +113,128 @@ class _ProfileState extends State<Profile> {
               ),
             )),
       ),
+    );
+  }
+
+  // Fullscreen dialog for settings
+  static Route<Object?> _dialogBuilder(BuildContext context, Object? arguments) {
+  return DialogRoute<void>(
+    context: context,
+    builder: (BuildContext context) {
+      return Dialog.fullscreen(
+        child:
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                'Settings',
+                style: TextStyle(
+                  fontSize: 30,
+                  color: Colors.black,
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(bottom: 20.0, top: 40),
+                child: MaterialButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return SimpleDialog(
+                          title: Text('Select a profile image'),
+                          children: <Widget>[
+                            SimpleDialogOption(
+                              onPressed: () {
+                                // Do something
+                              },
+                              child: MaterialButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                color: Colors.blue,
+                                padding: EdgeInsets.all(40),
+                                shape: CircleBorder(),
+                              ),
+                            ),
+                            SimpleDialogOption(
+                              onPressed: () {
+                                // Do something
+                              },
+                              child: MaterialButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                color: Colors.blue,
+                                padding: EdgeInsets.all(40),
+                                shape: CircleBorder(),
+                              ),
+                            ),
+                            SimpleDialogOption(
+                              onPressed: () {
+                                // Do something
+                              },
+                              child: MaterialButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                color: Colors.blue,
+                                padding: EdgeInsets.all(40),
+                                shape: CircleBorder(),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  color: Colors.blue,
+                  padding: EdgeInsets.all(50),
+                  shape: CircleBorder(),
+                ),
+              ),
+
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 20.0),
+                child: TextField(
+                  //controller: _controller,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Bio',
+                  ),
+                  onChanged: (value) {
+                    // save bio text
+                  },
+                ),
+              ),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                      style: TextButton.styleFrom(
+                        textStyle: Theme.of(context).textTheme.labelLarge,
+                      ),
+                      child: const Text('Cancel'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      textStyle: Theme.of(context).textTheme.labelLarge,
+                    ),
+                    child: const Text('Save'),
+                    onPressed: () {
+                      // save changes function call
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
