@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:networking_app/components/search_bar.dart';
 import 'package:networking_app/db/firebase/controllers/firebase_posts_controller.dart';
 import 'package:networking_app/pages/create_post.dart';
+import 'package:networking_app/pages/post_page.dart';
 
 class Feed extends StatefulWidget {
   const Feed({Key? key}) : super(key: key);
@@ -22,6 +23,7 @@ class Feed extends StatefulWidget {
 
 class _FeedState extends State<Feed> {
   final Query _postsRef = FirebaseDatabase.instance.ref().child('posts');
+  //Post format ↓¦↓
   // List<Post> posts = [
   //   Post(
   //       title: 'Post 1',
@@ -73,6 +75,11 @@ class _FeedState extends State<Feed> {
 
   // * Tags of a post
   Widget _buildTags(tags) {
+    // * If there are no tags, return an empty container due to the fact that firebase doesn't save empty lists and returns null instead
+    // * This could be altered to storing some placeholder value in firebase instead of null in the future
+    if (tags == null) {
+      return Container();
+    }
     List<String> tagsToDisplay = tags.cast<String>();
     return Container(
       margin: const EdgeInsets.only(top: 5, bottom: 10, left: 0),
@@ -131,7 +138,16 @@ class _FeedState extends State<Feed> {
               ),
               margin: const EdgeInsets.symmetric(vertical: 6),
               child: ListTile(
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PostPage(
+                        post: post,
+                      ),
+                    ),
+                  );
+                },
                 minVerticalPadding: 10,
                 title: _postTitle(post['title']),
                 subtitle: Column(
