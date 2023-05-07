@@ -18,7 +18,7 @@ class FirebasePostsController {
       'body': body,
       'title': title,
       'time': DateTime.now().millisecondsSinceEpoch,
-      'eventTime': eventTime,
+      'eventTime': eventTime != 0 ? eventTime : null,
       'likes': 0,
       'tags': tags,
     };
