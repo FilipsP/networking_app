@@ -2,7 +2,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:networking_app/components/search_bar.dart';
-import 'package:networking_app/db/firebase/controllers/firebase_posts_controller.dart';
 import 'package:networking_app/pages/create_post.dart';
 import 'package:networking_app/pages/post_page.dart';
 
