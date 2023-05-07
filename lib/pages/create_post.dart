@@ -93,12 +93,14 @@ class _CreatePostState extends State<CreatePost> {
       });
       return;
     }
-    await FirebasePostsController().writeNewPost(
-      title: _titleController.text,
-      body: _contentController.text,
-      tags: _selectedItems,
-      eventTime: _dateTime.millisecondsSinceEpoch,
-    );
+    await FirebasePostsController()
+        .writeNewPost(
+          title: _titleController.text,
+          body: _contentController.text,
+          tags: _selectedItems,
+          eventTime: _dateTime.millisecondsSinceEpoch,
+        )
+        .then((value) => Navigator.of(context).pop());
   }
 
   Widget _buildCreatePostContainer() {

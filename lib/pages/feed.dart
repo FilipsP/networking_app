@@ -143,6 +143,7 @@ class _FeedState extends State<Feed> {
                     MaterialPageRoute(
                       builder: (context) => PostPage(
                         post: post,
+                        postKey: snapshot.key.toString(),
                       ),
                     ),
                   );

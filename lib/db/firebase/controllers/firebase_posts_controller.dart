@@ -28,4 +28,9 @@ class FirebasePostsController {
 
     return FirebaseDatabase.instance.ref().update(updates);
   }
+
+  Future<void> deletePost(String key) async {
+    //TODO: Add an extra check to make sure the user is the author of the post
+    return FirebaseDatabase.instance.ref().child('posts').child(key).remove();
+  }
 }
