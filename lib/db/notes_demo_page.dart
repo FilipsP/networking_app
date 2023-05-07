@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:networking_app/db/firebase/firebase_posts.dart';
+import 'package:networking_app/db/firebase/test_components/firebase_posts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'firebase/firebase_db_init.dart';
+import 'firebase/controllers/firebase_posts_controller.dart';
 
 class NotesDemoPage extends StatefulWidget {
   const NotesDemoPage({super.key});
@@ -31,7 +31,7 @@ class _NotesDemoPageState extends State<NotesDemoPage> {
   Future<void> _writeNewPostToDB() async {
     final body = await _promptForNewNote();
     if (body != null) {
-      await FirebaseDB().writeNewPost("Test", body);
+      //await FirebaseDB().writeNewPost("Test", body);
     } else {
       if (kDebugMode) {
         print("body is null");

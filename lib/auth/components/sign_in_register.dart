@@ -69,11 +69,12 @@ class SignInRegisterState extends State<SignInRegister> {
       return;
     }
     try {
-      await Auth().handleSignIn(
-        email: _emailController.text,
-        password: _passwordController.text,
-      );
-      _leaveSignInRegister();
+      await Auth()
+          .handleSignIn(
+            email: _emailController.text,
+            password: _passwordController.text,
+          )
+          .then((value) => _leaveSignInRegister());
     } on FirebaseAuthException catch (e) {
       _handleFirebaseError(e);
     }
