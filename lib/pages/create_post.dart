@@ -2,6 +2,7 @@
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:networking_app/components/multi_select_from_db.dart';
 import 'package:networking_app/db/firebase/controllers/firebase_posts_controller.dart';
 
@@ -17,7 +18,8 @@ class _CreatePostState extends State<CreatePost> {
   List<String> _selectedItems = [];
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
-  DateTime _dateTime = DateTime.now();
+  DateTime _dateTime = DateTime.fromMicrosecondsSinceEpoch(0);
+  bool _dateAndTimeSelected = false;
   String _errorMessage = '';
 
   void _showMultiSelect() async {
@@ -50,12 +52,13 @@ class _CreatePostState extends State<CreatePost> {
   Future<TimeOfDay?> _showTimePicker() => showTimePicker(
         context: context,
         initialTime: TimeOfDay.now(),
+        helpText: 'AM - before noon\nPM - after noon',
       );
 
   Future<DateTime?> _showDatePicker() => showDatePicker(
         context: context,
         initialDate: DateTime.now(),
-        firstDate: DateTime(2000),
+        firstDate: DateTime.now(),
         lastDate: DateTime(2025),
       );
 
@@ -72,6 +75,9 @@ class _CreatePostState extends State<CreatePost> {
       time.hour,
       time.minute,
     );
+    setState(() {
+      _dateAndTimeSelected = true;
+    });
   }
 
   void _writePost() async {
@@ -97,7 +103,7 @@ class _CreatePostState extends State<CreatePost> {
 
   Widget _buildCreatePostContainer() {
     return Container(
-        margin: const EdgeInsets.symmetric(vertical: 40),
+        margin: const EdgeInsets.symmetric(vertical: 30),
         alignment: Alignment.center,
         child: Column(children: [
           if (_errorMessage.isNotEmpty)
@@ -111,6 +117,11 @@ class _CreatePostState extends State<CreatePost> {
             label: const Text('Create Post'),
           ),
         ]));
+  }
+
+  String _formatTime(int time) {
+    return DateFormat('EEEE, dd MMMM, yyyy HH:mm')
+        .format(DateTime.fromMillisecondsSinceEpoch(time));
   }
 
   @override
@@ -201,6 +212,9 @@ class _CreatePostState extends State<CreatePost> {
                 ElevatedButton(
                     onPressed: dateAndTime,
                     child: const Text('+ Add Date&Time')),
+                _dateAndTimeSelected == true
+                    ? Text(_formatTime(_dateTime.millisecondsSinceEpoch))
+                    : const Text(''),
                 _buildCreatePostContainer(),
               ],
             ),
