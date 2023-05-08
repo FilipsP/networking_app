@@ -8,15 +8,13 @@ class Profile extends StatefulWidget {
 }
 
 class Person { // for testing without firebase
-  late String name;
-  late int profileImg; // selection from db
-  String? bio; // displays null
+  final String name;
+  final int profileImg; // selection from db
+  final String bio;
 
   Person(this.name, this.profileImg, this.bio);
 }
-var person = Person('John Doe', 2, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sit amet ante sem. Proin venenatis sodales erat non faucibus. Nullam eleifend diam nec ipsum venenatis, ut porttitor quam faucibus. In hac habitasse platea dictumst.');
-
-TextEditingController _controller = TextEditingController(text: '${person.bio}');
+final person = Person('John Doe', 2, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sit amet ante sem. Proin venenatis sodales erat non faucibus. Nullam eleifend diam nec ipsum venenatis, ut porttitor quam faucibus. In hac habitasse platea dictumst.');
 
 class _ProfileState extends State<Profile> {
   @override
@@ -35,11 +33,10 @@ class _ProfileState extends State<Profile> {
                 child: const CircleAvatar(
                   radius: 50,
                   backgroundColor: Colors.black,
-                  // backgroundImage: 2, // profile image here
                 ),
               ),
             ),
-            Text(
+            Text( // display person name from person object
               '${person.name}',
               style: TextStyle(
                 fontSize: 24,
@@ -54,7 +51,7 @@ class _ProfileState extends State<Profile> {
                   color: Colors.black,
                   onPressed: () {
                     
-                  }, // edit profile img and bio (open window on top to change?)
+                  }, // edit profile img and bio
                 ),
               ],
             ),
@@ -85,7 +82,7 @@ class _ProfileState extends State<Profile> {
                     ),
                     Padding(
                       padding: EdgeInsets.fromLTRB(15, 5, 15, 15),
-                      child: Text('${person.bio}'),
+                      child: Text('${person.bio}'), // about me info from person object
                     ),
                   ],
                 ),
