@@ -10,11 +10,9 @@ class Settings extends StatefulWidget {
 
 class _SettingsState extends State<Settings> {
 
-
-
 @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold( // blank page with cancel and save button
       body: ListView(
         children: [
           Center(
@@ -29,7 +27,7 @@ class _SettingsState extends State<Settings> {
                         textStyle: Theme.of(context).textTheme.labelLarge,
                       ),
                       child: const Text('Cancel'),
-                      onPressed: () {
+                      onPressed: () { // closes back to where the page was opened
                         Navigator.of(context).pop();
                       },
                     ),
@@ -38,7 +36,7 @@ class _SettingsState extends State<Settings> {
                       textStyle: Theme.of(context).textTheme.labelLarge,
                     ),
                     child: const Text('Save'),
-                    onPressed: () {
+                    onPressed: () {  // closes back to where the page was opened
                       // save changes function call
                       Navigator.of(context).pop();
                     },

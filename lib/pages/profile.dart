@@ -59,7 +59,7 @@ class _ProfileState extends State<Profile> {
           color: Colors.black,
           iconSize: 30,
           onPressed: () {
-            Navigator.of(context).restorablePush(_dialogBuilder);
+            Navigator.of(context).restorablePush(_dialogBuilder); // open fullscreen dialog
           },
         ),
       ],
@@ -116,8 +116,10 @@ class _ProfileState extends State<Profile> {
     );
   }
 
+  TextEditingController _controller = TextEditingController(text: '${person.bio}');
+
   // Fullscreen dialog for settings
-  static Route<Object?> _dialogBuilder(BuildContext context, Object? arguments) {
+  static Route<Object?> _dialogBuilder(BuildContext context, Object? arguments) { // static doesn't allow changes
   return DialogRoute<void>(
     context: context,
     builder: (BuildContext context) {
@@ -137,18 +139,19 @@ class _ProfileState extends State<Profile> {
                 margin: EdgeInsets.only(bottom: 20.0, top: 40),
                 child: MaterialButton(
                   onPressed: () {
-                    showDialog(
+                    showDialog( // Opens smaller dialog with options
                       context: context,
                       builder: (BuildContext context) {
                         return SimpleDialog(
                           title: Text('Select a profile image'),
-                          children: <Widget>[
+                          children: <Widget>[ // Dialog has buttons as options that should represent profile images to choose
                             SimpleDialogOption(
                               onPressed: () {
                                 // Do something
                               },
                               child: MaterialButton(
-                                onPressed: () {
+                                onPressed: () { // Choosing an image closes the dialog
+                                  // save profile image function call should be here
                                   Navigator.pop(context);
                                 },
                                 color: Colors.blue,
@@ -192,11 +195,10 @@ class _ProfileState extends State<Profile> {
                   shape: CircleBorder(),
                 ),
               ),
-
               Container(
                 margin: EdgeInsets.symmetric(horizontal: 20.0),
                 child: TextField(
-                  //controller: _controller,
+                  // controller: _controller, // can't call _controller because of static
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Bio',
@@ -206,7 +208,6 @@ class _ProfileState extends State<Profile> {
                   },
                 ),
               ),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -215,7 +216,8 @@ class _ProfileState extends State<Profile> {
                         textStyle: Theme.of(context).textTheme.labelLarge,
                       ),
                       child: const Text('Cancel'),
-                      onPressed: () {
+                      onPressed: () { // closes the fullscreen dialog
+                        // should have discard changes function call here
                         Navigator.of(context).pop();
                       },
                     ),
@@ -224,8 +226,8 @@ class _ProfileState extends State<Profile> {
                       textStyle: Theme.of(context).textTheme.labelLarge,
                     ),
                     child: const Text('Save'),
-                    onPressed: () {
-                      // save changes function call
+                    onPressed: () { //closes the fullscreen dialog
+                      // save changes function call should be here
                       Navigator.of(context).pop();
                     },
                   ),
