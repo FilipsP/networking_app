@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
+import 'package:networking_app/auth/auth.dart';
 import 'package:networking_app/components/search_bar.dart';
 import 'package:networking_app/pages/create_post.dart';
 import 'package:networking_app/pages/post_page.dart';
@@ -21,7 +22,11 @@ class Feed extends StatefulWidget {
 // }
 
 class _FeedState extends State<Feed> {
-  final Query _postsRef = FirebaseDatabase.instance.ref().child('posts');
+  final Query _postsRef = FirebaseDatabase.instance
+      .ref()
+      .child('posts')
+      .limitToLast(10)
+      .orderByChild('time');
   //Post format ↓¦↓
   // List<Post> posts = [
   //   Post(
@@ -59,6 +64,9 @@ class _FeedState extends State<Feed> {
 
   // * Floating Action Button to create a new post
   Widget _createPostButton() {
+    if (Auth().currentUser?.isAnonymous ?? false) {
+      return Container();
+    }
     return FloatingActionButton(
       onPressed: () {
         Navigator.push(
@@ -108,7 +116,8 @@ class _FeedState extends State<Feed> {
 // * Subtitle of a post
   Widget _postSubtitle(body) {
     return Text(body,
-        maxLines: 4,
+        maxLines: 3,
+        overflow: TextOverflow.ellipsis,
         style: const TextStyle(
           fontSize: 16,
         ));
@@ -142,6 +151,7 @@ class _FeedState extends State<Feed> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => PostPage(
+                        key: Key(snapshot.key.toString()),
                         post: post,
                         postKey: snapshot.key.toString(),
                       ),

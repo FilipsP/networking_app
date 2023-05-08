@@ -3,7 +3,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:networking_app/auth/components/auth_home.dart';
 import 'auth/auth.dart';
-import 'db/notes_demo_page.dart';
 import 'firebase_options.dart';
 import 'pages/feed.dart';
 import 'pages/friends.dart';
