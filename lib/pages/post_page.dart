@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:networking_app/auth/auth.dart';
+import 'package:networking_app/pages/person.dart';
 
 import '../db/firebase/controllers/firebase_posts_controller.dart';
+import 'friends.dart';
 
 class PostPage extends StatefulWidget {
   final Map post;
@@ -105,8 +107,17 @@ class _PostPageState extends State<PostPage> {
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
       title: Text(_getAppTitle()),
+      centerTitle: true,
       actions: [
-        IconButton(
+        if (!_isUsersPost)
+          IconButton(
+            onPressed: _navigateToAuthorProfilePage,
+            icon: const Icon(
+              Icons.person,
+              size: 30.0,
+            ),
+          ),
+        /*IconButton(
             onPressed: _handleFavoriteButtonClick,
             icon: const Icon(Icons.favorite),
             color: _favoriteButtonColor),
@@ -114,12 +125,16 @@ class _PostPageState extends State<PostPage> {
           IconButton(
             onPressed: () {},
             icon: const Icon(Icons.edit),
-          ),
+          ),*/
         if (_isUsersPost)
           IconButton(
             onPressed: _handleDeleteButtonClick,
-            icon: const Icon(Icons.delete),
+            icon: const Icon(
+              Icons.delete,
+              size: 30.0,
+            ),
           ),
+        const SizedBox(width: 30.0)
       ],
     );
   }
@@ -189,40 +204,58 @@ class _PostPageState extends State<PostPage> {
     );
   }
 
+  void _navigateToAuthorProfilePage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        //TODO: Only give a uid, data will be fetched inside person page
+        builder: (context) => Person(
+            data: Friend(
+                name: widget.post['author'],
+                //TODO: It is actually a major, not a description
+                description: 'Tester',
+                avatar: '',
+                key: UniqueKey())),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              widget.post['title'],
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 40.0,
-              ),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.post['title'],
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 30.0,
+                  ),
+                ),
+                const SizedBox(height: 8.0),
+                _buildPostTime(widget.post['time']),
+                const SizedBox(height: 16.0),
+                Text(
+                  widget.post['body'].replaceAll('\\n', '\n'),
+                  softWrap: true,
+                  style: const TextStyle(
+                    fontSize: 20.0,
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+                _buildEventTime(widget.post['eventTime']),
+                const SizedBox(height: 8.0),
+                _buildLikes(widget.post['likes']),
+                const SizedBox(height: 8.0),
+                _buildTags(widget.post['tags']),
+              ],
             ),
-            const SizedBox(height: 8.0),
-            _buildPostTime(widget.post['time']),
-            const SizedBox(height: 16.0),
-            Text(
-              widget.post['body'],
-              style: const TextStyle(
-                fontSize: 25.0,
-              ),
-            ),
-            const SizedBox(height: 16.0),
-            _buildEventTime(widget.post['eventTime']),
-            const SizedBox(height: 8.0),
-            _buildLikes(widget.post['likes']),
-            const SizedBox(height: 8.0),
-            _buildTags(widget.post['tags']),
-          ],
-        ),
-      ),
+          )),
     );
   }
 }
