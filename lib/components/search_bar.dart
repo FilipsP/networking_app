@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class SearchBar extends StatefulWidget {
-  const SearchBar({Key? key}) : super(key: key);
+  final Function callback;
+  const SearchBar({Key? key, required this.callback}) : super(key: key);
 
   @override
   State<SearchBar> createState() => _SearchBarState();
@@ -12,8 +13,9 @@ class _SearchBarState extends State<SearchBar> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: const TextField(
-        decoration: InputDecoration(
+      child: TextField(
+        onChanged: (value) => widget.callback(value),
+        decoration: const InputDecoration(
             contentPadding: EdgeInsets.symmetric(vertical: 15),
             hintText: 'Search',
             prefixIcon: Icon(Icons.search),

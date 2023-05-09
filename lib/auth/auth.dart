@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:networking_app/db/firebase/controllers/firebase_user_controller.dart';
 
