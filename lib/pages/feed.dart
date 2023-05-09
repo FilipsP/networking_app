@@ -1,8 +1,8 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:networking_app/auth/auth.dart';
-import 'package:networking_app/components/search_bar.dart';
 import 'package:networking_app/pages/create_post.dart';
 import 'package:networking_app/pages/post_page.dart';
 
@@ -13,52 +13,12 @@ class Feed extends StatefulWidget {
   State<Feed> createState() => _FeedState();
 }
 
-// class Post {
-//   final String title;
-//   final String body;
-//   final List<String> tags;
-//
-//   Post({required this.title, required this.body, this.tags = const []});
-// }
-
 class _FeedState extends State<Feed> {
   final Query _postsRef = FirebaseDatabase.instance
       .ref()
       .child('posts')
-      .limitToLast(10)
+      .limitToLast(100)
       .orderByChild('time');
-  //Post format ↓¦↓
-  // List<Post> posts = [
-  //   Post(
-  //       title: 'Post 1',
-  //       body: 'This is the body of post 1',
-  //       tags: ['tag1', 'tag2', 'tag3']),
-  //   Post(title: 'Post 2', body: 'This is the body of post 2', tags: ['tag1']),
-  //   Post(
-  //       title: 'Post 3',
-  //       body: 'This is the body of post 3',
-  //       tags: ['tag1', 'tag2']),
-  //   Post(title: 'Post 4', body: 'This is the body of post 4'),
-  //   Post(
-  //       title: 'Post 5',
-  //       body:
-  //           'This is the body of post 5, with a long body text to test the overflow of the text widget and see if it works properly or not.'),
-  //   Post(title: 'Post 6', body: 'This is the body of post 6'),
-  //   Post(title: 'Post 7', body: 'This is the body of post 7'),
-  //   Post(
-  //       title: 'Post 8',
-  //       body:
-  //           'This is the body of post 8. It has a long body text to test the overflow of the text widget and see if it works properly or not. It has a long body text to test the overflow of the text widget and see if it works properly or not.',
-  //       tags: [
-  //         'longerTag1',
-  //         'longerTag2',
-  //         'longerTag3',
-  //         'longerTag4',
-  //         'longerTag5',
-  //       ]),
-  //   Post(title: 'Post 9', body: 'This is the body of post 9'),
-  //   Post(title: 'Post 10', body: 'This is the body of post 10'),
-  // ];
 
   // * UI Components(Widgets):
 
@@ -78,6 +38,14 @@ class _FeedState extends State<Feed> {
       },
       child: const Icon(Icons.edit),
     );
+  }
+
+  Widget _buildImage(String? imageUrl) {
+    if (imageUrl == null) {
+      return Container();
+    }
+    //TODO: Add settings to change image preferences
+    return Image.network('$imageUrl/400/200?grayscale');
   }
 
   // * Tags of a post
@@ -117,61 +85,93 @@ class _FeedState extends State<Feed> {
   Widget _postSubtitle(body) {
     return Text(body,
         maxLines: 3,
+        softWrap: true,
         overflow: TextOverflow.ellipsis,
         style: const TextStyle(
           fontSize: 16,
         ));
   }
 
+  Widget _buildListTile(snapshot, post) {
+    return ListTile(
+      onTap: () => _navigateToPostPage(post, snapshot.key.toString()),
+      minVerticalPadding: 10,
+      title: _postTitle(post['title']),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildTags(post['tags']),
+          _postSubtitle(post['body'].replaceAll('\\n', '\n')),
+          _buildImage(post['imageUrl']),
+          SizedBox(height: post['eventTime'] == null ? 0 : 10.0),
+          _eventTime(post['eventTime']),
+        ],
+      ),
+    );
+  }
+
+  Widget _eventTime(int? time) {
+    if (time == null) {
+      return Container();
+    }
+    int timeUntilEvent = time - DateTime.now().millisecondsSinceEpoch;
+    if (timeUntilEvent < 0) {
+      return const Text(
+        'Event has already passed',
+        style: TextStyle(
+          color: Colors.grey,
+        ),
+      );
+    }
+    return Text(
+      'Event in ${DateFormat('d').format(DateTime.fromMillisecondsSinceEpoch(timeUntilEvent))} days',
+      style: const TextStyle(
+        color: Colors.grey,
+      ),
+    );
+  }
+
+  Widget _buildList() {
+    return FirebaseAnimatedList(
+      query: _postsRef,
+      // * \uf8ff is a unicode character that is used to sort strings after all other characters
+      itemBuilder: (BuildContext context, DataSnapshot snapshot,
+          Animation<double> animation, int index) {
+        Map<dynamic, dynamic> post = snapshot.value as Map;
+        post['key'] = snapshot;
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Card(
+            elevation: 2,
+            shape: RoundedRectangleBorder(
+              side: const BorderSide(color: Colors.grey, width: 0.5),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            margin: const EdgeInsets.symmetric(vertical: 6),
+            child: _buildListTile(snapshot, post),
+          ),
+        );
+      },
+    );
+  }
+
+  void _navigateToPostPage(post, key) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PostPage(
+          key: Key(key),
+          post: post,
+          postKey: key,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 70,
-        title: const SearchBar(),
-      ),
-      body: FirebaseAnimatedList(
-        query: _postsRef,
-        itemBuilder: (BuildContext context, DataSnapshot snapshot,
-            Animation<double> animation, int index) {
-          Map<dynamic, dynamic> post = snapshot.value as Map;
-          post['key'] = snapshot;
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                side: const BorderSide(color: Colors.grey, width: 0.5),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              margin: const EdgeInsets.symmetric(vertical: 6),
-              child: ListTile(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PostPage(
-                        key: Key(snapshot.key.toString()),
-                        post: post,
-                        postKey: snapshot.key.toString(),
-                      ),
-                    ),
-                  );
-                },
-                minVerticalPadding: 10,
-                title: _postTitle(post['title']),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildTags(post['tags']),
-                    _postSubtitle(post['body']),
-                  ],
-                ),
-              ),
-            ),
-          );
-        },
-      ),
+      body: _buildList(),
       floatingActionButton: _createPostButton(),
     );
   }
