@@ -94,6 +94,7 @@ class _FeedState extends State<Feed> {
 
   Widget _buildListTile(snapshot, post) {
     return ListTile(
+      key: ValueKey(post),
       onTap: () => _navigateToPostPage(post, snapshot.key.toString()),
       minVerticalPadding: 10,
       title: _postTitle(post['title']),

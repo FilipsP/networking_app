@@ -55,6 +55,7 @@ class _FriendsState extends State<Friends> {
 
   Widget _buildListTile(index) {
     return ListTile(
+      key: Key(_filteredFriends[index].key.toString()),
       leading: CircleAvatar(
         backgroundColor: Colors.grey[300],
         backgroundImage: NetworkImage(_getURL(
