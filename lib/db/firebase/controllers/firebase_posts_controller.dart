@@ -5,6 +5,20 @@ import 'package:uuid/uuid.dart';
 class FirebasePostsController {
   DatabaseReference ref = FirebaseDatabase.instance.ref();
 
+  Future<void> likePost(String key) async {
+    final Map<String, dynamic> updates = {};
+    updates['/posts/$key/likes'] = ServerValue.increment(1);
+    updates['/posts/$key/likedBy/${Auth().currentUser!.uid}'] = true;
+    return FirebaseDatabase.instance.ref().update(updates);
+  }
+
+  Future<void> unlikePost(String key) async {
+    final Map<String, dynamic> updates = {};
+    updates['/posts/$key/likes'] = ServerValue.increment(-1);
+    updates['/posts/$key/likedBy/${Auth().currentUser!.uid}'] = null;
+    return FirebaseDatabase.instance.ref().update(updates);
+  }
+
   Future<void> writeNewPost(
       {required String title,
       required String body,

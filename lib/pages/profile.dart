@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:networking_app/auth/auth.dart';
+import 'package:networking_app/db/dto/person_dto.dart';
+import 'package:networking_app/db/firebase/controllers/firebase_user_controller.dart';
 
 import '../auth/components/auth_home.dart';
 
@@ -9,20 +12,23 @@ class Profile extends StatefulWidget {
   State<Profile> createState() => _ProfileState();
 }
 
-class Person {
-  final String name;
-  final String avatar;
-  final String bio;
-
-  Person(this.name, this.avatar, this.bio);
-}
-
-final person = Person(
-    'John Doe',
-    'https://api.multiavatar.com/Charles Darwin.png',
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec auc tor, odio eget ultricies aliquam, diam diam mattis nisl, eget ultricies diam diam nec nisl. Donec auctor, odio eget ultricies aliquam, diam diam mattis nisl, eget ultricies diam diam nec nisl.');
-
 class _ProfileState extends State<Profile> {
+  PersonDTO? _personalData;
+
+  @override
+  void initState() {
+    super.initState();
+    _getPersonalData();
+  }
+
+  void _getPersonalData() async {
+    PersonDTO? personalData =
+        await FirebaseUserController().getPersonData(Auth().currentUser!.uid);
+    setState(() {
+      _personalData = personalData;
+    });
+  }
+
   // * Avatar
   Widget _avatar() {
     return Padding(
@@ -32,7 +38,8 @@ class _ProfileState extends State<Profile> {
         height: 100,
         decoration: const BoxDecoration(shape: BoxShape.circle),
         child: CircleAvatar(
-          backgroundImage: NetworkImage(person.avatar),
+          backgroundColor: Colors.transparent,
+          backgroundImage: NetworkImage(_imageString()),
         ),
       ),
     );
@@ -41,7 +48,7 @@ class _ProfileState extends State<Profile> {
 // * User Name
   Widget _userName() {
     return Text(
-      person.name,
+      _personalData?.name ?? Auth().currentUser!.email!.split('@')[0],
       style: const TextStyle(
         fontSize: 26,
       ),
@@ -80,7 +87,7 @@ class _ProfileState extends State<Profile> {
     return Padding(
       padding: const EdgeInsets.only(top: 10),
       child: Text(
-        person.bio,
+        _personalData?.bio ?? 'Nothing to see here',
         style: const TextStyle(fontSize: 16),
       ),
     );
@@ -114,25 +121,38 @@ class _ProfileState extends State<Profile> {
     );
   }
 
+  String _imageString() {
+    if (_personalData?.avatar == null) {
+      if (_personalData?.name != null) {
+        return "https://ui-avatars.com/api/?name=${_personalData?.name}&size=256";
+      }
+    }
+    return "https://static.thenounproject.com/png/2643408-200.png";
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: ListView(
-        children: [
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                _avatar(),
-                _userName(),
-                _settingsButton(),
-                _bioCard(),
-                const AuthHome(),
-              ],
-            ),
+    if (Auth().currentUser?.isAnonymous ?? false) return const AuthHome();
+    if (_personalData == null) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+    return ListView(
+      children: [
+        Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              _avatar(),
+              _userName(),
+              _settingsButton(),
+              _bioCard(),
+              const AuthHome(),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

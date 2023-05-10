@@ -3,7 +3,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:networking_app/auth/components/auth_home.dart';
 import 'auth/auth.dart';
-import 'db/notes_demo_page.dart';
 import 'firebase_options.dart';
 import 'pages/feed.dart';
 import 'pages/friends.dart';
@@ -23,9 +22,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'Flutter Demo',
-        theme: ThemeData(
-          useMaterial3: true,
-        ),
+        theme: ThemeData(useMaterial3: true, fontFamily: 'SourceSansPro'),
         home: const Home());
   }
 }
@@ -98,7 +95,15 @@ class _HomeState extends State<Home> {
 
   Widget _buildBody() {
     if (_user == null) {
-      return const AuthHome();
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: const [
+          Text("Hey! Welcome", style: TextStyle(fontSize: 30)),
+          Text("Please sign in to continue", style: TextStyle(fontSize: 20)),
+          SizedBox(height: 30),
+          AuthHome(),
+        ],
+      );
     }
     return _widgetOptions.elementAt(_selectedIndex);
   }
