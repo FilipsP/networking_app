@@ -204,10 +204,13 @@ class _CreatePostState extends State<CreatePost> {
                 Container(
                   height: 14,
                 ),
-                ElevatedButton(
-                  onPressed: selectFile,
-                  child: const Text('+ Add File'),
-                ),
+
+                // * Saved for better times
+                // ElevatedButton(
+                //   onPressed: selectFile,
+                //   child: const Text('+ Add File'),
+                // ),
+
                 Container(
                   height: 14,
                 ),
