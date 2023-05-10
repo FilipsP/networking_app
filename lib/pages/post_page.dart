@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:networking_app/auth/auth.dart';
 import 'package:networking_app/pages/person.dart';
-
 import '../db/firebase/controllers/firebase_posts_controller.dart';
-import 'friends.dart';
 
 class PostPage extends StatefulWidget {
   final Map post;
@@ -23,7 +21,7 @@ class PostPage extends StatefulWidget {
 class _PostPageState extends State<PostPage> {
   bool _isUsersPost = false;
   Color _likeButtonColor = Colors.grey;
-  Color _favoriteButtonColor = Colors.grey;
+  // Color _favoriteButtonColor = Colors.grey;
 
   @override
   void initState() {
@@ -31,12 +29,12 @@ class _PostPageState extends State<PostPage> {
     setState(() {
       _isUsersPost = widget.post['authorId'] == Auth().currentUser!.uid;
       //TODO: Used when implementing like functionality
-      /* if (widget.post['likedBy'] != null) {
-       _likeButtonColor =
-           widget.post['likedBy'].contains(Auth().currentUser!.uid)
-               ? Colors.blue
-               : Colors.grey;
-     } */
+      if (widget.post['likedBy'] != null) {
+        _likeButtonColor =
+            widget.post['likedBy'][Auth().currentUser!.uid] != null
+                ? Colors.blue
+                : Colors.grey;
+      }
     });
   }
 
@@ -151,26 +149,28 @@ class _PostPageState extends State<PostPage> {
     setState(() {
       if (_likeButtonColor == Colors.grey) {
         _likeButtonColor = Colors.blue;
+        FirebasePostsController().likePost(widget.postKey);
         widget.post['likes']++;
       } else {
         _likeButtonColor = Colors.grey;
+        FirebasePostsController().unlikePost(widget.postKey);
         widget.post['likes']--;
       }
     });
   }
 
-  void _handleFavoriteButtonClick() {
-    //TODO: Implement saving a post to favorites and saving it to firebase
-    if (_favoriteButtonColor == Colors.grey) {
-      setState(() {
-        _favoriteButtonColor = Colors.red;
-      });
-    } else {
-      setState(() {
-        _favoriteButtonColor = Colors.grey;
-      });
-    }
-  }
+  // void _handleFavoriteButtonClick() {
+  //   //TODO: Implement saving a post to favorites and saving it to firebase
+  //   if (_favoriteButtonColor == Colors.grey) {
+  //     setState(() {
+  //       _favoriteButtonColor = Colors.red;
+  //     });
+  //   } else {
+  //     setState(() {
+  //       _favoriteButtonColor = Colors.grey;
+  //     });
+  //   }
+  // }
 
   Future<void> _handleDeleteButtonClick() async {
     bool? isAccept = await _promptDeletePost();
@@ -209,13 +209,7 @@ class _PostPageState extends State<PostPage> {
       context,
       MaterialPageRoute(
         //TODO: Only give a uid, data will be fetched inside person page
-        builder: (context) => Person(
-            data: Friend(
-                name: widget.post['author'],
-                //TODO: It is actually a major, not a description
-                description: 'Tester',
-                avatar: '',
-                key: UniqueKey())),
+        builder: (context) => Person(authorId: widget.post['authorId']),
       ),
     );
   }
