@@ -1,9 +1,21 @@
 import 'package:firebase_database/firebase_database.dart';
 
 import '../../../auth/auth.dart';
+import '../../dto/person_dto.dart';
 
 class FirebaseUserController {
   DatabaseReference ref = FirebaseDatabase.instance.ref();
+
+  Future<PersonDTO?> getPersonData(String userID) async {
+    return await ref.child('users/$userID').once().then((DatabaseEvent event) {
+      if (event.snapshot.value == null) {
+        return null;
+      }
+      Map data = event.snapshot.value as Map;
+      data['key'] = event.snapshot.key;
+      return PersonDTO.fromSnapshot(data);
+    });
+  }
 
   Future<bool> isFriend(String userID) async {
     return await ref
