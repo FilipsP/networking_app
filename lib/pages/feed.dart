@@ -110,21 +110,26 @@ class _FeedState extends State<Feed> {
     );
   }
 
+  String _getTimeString(int time) {
+    int timeUntilEvent = time - DateTime.now().millisecondsSinceEpoch;
+    if (timeUntilEvent < 0) {
+      return 'Event has already passed';
+    }
+    if (timeUntilEvent < 3600000) {
+      return 'Event in ${DateFormat('m').format(DateTime.fromMillisecondsSinceEpoch(timeUntilEvent))} minutes';
+    }
+    if (timeUntilEvent < 86400000) {
+      return 'Event in ${DateFormat('h').format(DateTime.fromMillisecondsSinceEpoch(timeUntilEvent))} hours';
+    }
+    return 'Event in ${DateFormat('d').format(DateTime.fromMillisecondsSinceEpoch(timeUntilEvent))} days';
+  }
+
   Widget _eventTime(int? time) {
     if (time == null) {
       return Container();
     }
-    int timeUntilEvent = time - DateTime.now().millisecondsSinceEpoch;
-    if (timeUntilEvent < 0) {
-      return const Text(
-        'Event has already passed',
-        style: TextStyle(
-          color: Colors.grey,
-        ),
-      );
-    }
     return Text(
-      'Event in ${DateFormat('d').format(DateTime.fromMillisecondsSinceEpoch(timeUntilEvent))} days',
+      _getTimeString(time),
       style: const TextStyle(
         color: Colors.grey,
       ),
@@ -134,7 +139,6 @@ class _FeedState extends State<Feed> {
   Widget _buildList() {
     return FirebaseAnimatedList(
       query: _postsRef,
-      // * \uf8ff is a unicode character that is used to sort strings after all other characters
       itemBuilder: (BuildContext context, DataSnapshot snapshot,
           Animation<double> animation, int index) {
         Map<dynamic, dynamic> post = snapshot.value as Map;
