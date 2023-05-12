@@ -1,14 +1,13 @@
 import 'dart:math';
-
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import '../auth/auth.dart';
+import 'package:random_avatar/random_avatar.dart';
 import '../db/dto/person_dto.dart';
 import '../db/firebase/controllers/firebase_user_controller.dart';
 
 class Person extends StatefulWidget {
-  final String authorId;
-  const Person({super.key, required this.authorId});
+  final String userID;
+  const Person({super.key, required this.userID});
 
   @override
   State<Person> createState() => _PersonState();
@@ -22,24 +21,13 @@ class _PersonState extends State<Person> {
   bool _isFriend = false;
   bool _hasData = false;
   bool _userNotFound = false;
+  bool _transparentBg = true;
   String? _errorMessage;
-  final List<String> colors = [
-    "F8B195",
-    "F67280",
-    "C06C84",
-    "6C5B7B",
-    "355C7D",
-    "99B898",
-    "FECEAB",
-    "FF847C",
-    "E84A5F",
-    "2A363B"
-  ];
 
   @override
   void initState() {
     super.initState();
-    _dbRef = FirebaseDatabase.instance.ref().child('users/${widget.authorId}');
+    _dbRef = FirebaseDatabase.instance.ref().child('users/${widget.userID}');
     _dbRef.once().then((DatabaseEvent event) {
       // * a bit lazy way to get single user data
       if (event.snapshot.value != null) {
@@ -66,9 +54,12 @@ class _PersonState extends State<Person> {
   }
 
   void _getIsFriend() async {
-    bool isFriend = await FirebaseUserController().isFriend(widget.authorId);
+    bool isFriend = await FirebaseUserController().isFriend(widget.userID);
     setState(() {
       _isFriend = isFriend;
+      if (isFriend) {
+        _transparentBg = false;
+      }
     });
   }
 
@@ -118,7 +109,6 @@ class _PersonState extends State<Person> {
 
   // * Avatar
   Widget _avatar() {
-    String bgColor = colors[_getRandomNumber(0, colors.length)];
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 20),
       child: Container(
@@ -126,11 +116,11 @@ class _PersonState extends State<Person> {
         height: 100,
         decoration: const BoxDecoration(shape: BoxShape.circle),
         child: CircleAvatar(
-          backgroundColor: bgColor.length == 6
-              ? Color(int.parse('0xFF$bgColor'))
-              : Colors.grey,
-          backgroundImage: NetworkImage(
-              _getURL(_personData?.avatar, _personData?.name, bgColor)),
+          backgroundColor: Colors.grey[700],
+          child: RandomAvatar(
+            _getURL(_personData?.avatar),
+            trBackground: _transparentBg,
+          ),
         ),
       ),
     );
@@ -240,29 +230,25 @@ class _PersonState extends State<Person> {
     );
   }
 
-  String _getURL(avatar, name, bgColor) {
+  String _getURL(avatar) {
     if (avatar == null || avatar.isEmpty || avatar == ' ') {
-      if (name != null || name.isNotEmpty || name != ' ')
-        return "https://ui-avatars.com/api/?name=${_personData?.name}&background=$bgColor&size=128";
+      return 'random avatar url';
     }
     return avatar;
   }
 
-  int _getRandomNumber(int from, int to) {
-    var random = Random();
-    return random.nextInt(to - from) + from;
-  }
-
   void _handleFriendButtonClick() async {
     if (_isFriend) {
-      await FirebaseUserController().removeFriend(widget.authorId);
+      await FirebaseUserController().removeFriend(widget.userID);
       setState(() {
         _isFriend = false;
+        _transparentBg = true;
       });
     } else {
-      await FirebaseUserController().addFriend(widget.authorId);
+      await FirebaseUserController().addFriend(widget.userID);
       setState(() {
         _isFriend = true;
+        _transparentBg = false;
       });
     }
   }
