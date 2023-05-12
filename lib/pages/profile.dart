@@ -4,6 +4,8 @@ import 'package:networking_app/db/dto/person_dto.dart';
 import 'package:networking_app/db/firebase/controllers/firebase_user_controller.dart';
 
 import '../auth/components/auth_home.dart';
+import 'profile_settings.dart';
+import 'package:random_avatar/random_avatar.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -34,14 +36,21 @@ class _ProfileState extends State<Profile> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 20),
       child: Container(
-        width: 100,
-        height: 100,
-        decoration: const BoxDecoration(shape: BoxShape.circle),
-        child: CircleAvatar(
-          backgroundColor: Colors.transparent,
-          backgroundImage: NetworkImage(_imageString()),
-        ),
-      ),
+          width: 100,
+          height: 100,
+          decoration: const BoxDecoration(shape: BoxShape.circle),
+          child: _buildAvatarImage()),
+    );
+  }
+
+  Widget _buildAvatarImage() {
+    if (_personalData?.avatar != '') {
+      return CircleAvatar(
+          radius: 50, child: RandomAvatar(_personalData!.avatar!));
+    }
+    return CircleAvatar(
+      radius: 50,
+      backgroundImage: NetworkImage(_imageString()),
     );
   }
 
@@ -64,8 +73,15 @@ class _ProfileState extends State<Profile> {
           icon: const Icon(Icons.settings),
           color: Colors.black,
           iconSize: 30,
-          onPressed:
-              () {}, // edit profile img and bio (open window on top to change?)
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    ProfileSettings(personalData: _personalData),
+              ),
+            );
+          }, // edit profile img and bio (open window on top to change?)
         ),
       ],
     );
@@ -122,10 +138,8 @@ class _ProfileState extends State<Profile> {
   }
 
   String _imageString() {
-    if (_personalData?.avatar == null) {
-      if (_personalData?.name != null) {
-        return "https://ui-avatars.com/api/?name=${_personalData?.name}&size=256";
-      }
+    if (_personalData?.avatar == '') {
+      return "https://ui-avatars.com/api/?name=${_personalData?.name}&size=256";
     }
     return "https://static.thenounproject.com/png/2643408-200.png";
   }
