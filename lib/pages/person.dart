@@ -129,8 +129,8 @@ class _PersonState extends State<Person> {
           backgroundColor: bgColor.length == 6
               ? Color(int.parse('0xFF$bgColor'))
               : Colors.grey,
-          backgroundImage: NetworkImage(_personData?.avatar ??
-              "https://ui-avatars.com/api/?name=${_personData?.name}&background=$bgColor&size=128"),
+          backgroundImage: NetworkImage(
+              _getURL(_personData?.avatar, _personData?.name, bgColor)),
         ),
       ),
     );
@@ -238,6 +238,14 @@ class _PersonState extends State<Person> {
         ),
       ],
     );
+  }
+
+  String _getURL(avatar, name, bgColor) {
+    if (avatar == null || avatar.isEmpty || avatar == ' ') {
+      if (name != null || name.isNotEmpty || name != ' ')
+        return "https://ui-avatars.com/api/?name=${_personData?.name}&background=$bgColor&size=128";
+    }
+    return avatar;
   }
 
   int _getRandomNumber(int from, int to) {

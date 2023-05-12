@@ -139,9 +139,7 @@ class _ProfileState extends State<Profile> {
 
   String _imageString() {
     if (_personalData?.avatar == '') {
-      if (_personalData?.name != '') {
-        return "https://ui-avatars.com/api/?name=${_personalData?.name}&size=256";
-      }
+      return "https://ui-avatars.com/api/?name=${_personalData?.name}&size=256";
     }
     return "https://static.thenounproject.com/png/2643408-200.png";
   }
