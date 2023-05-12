@@ -23,7 +23,7 @@ class CommentDTO {
   }
 
   void addData(data) {
-    data['avatar'] = avatar;
-    data['name'] = name;
+    name = data['name'];
+    avatar = data['avatar'];
   }
 }
