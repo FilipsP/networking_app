@@ -29,7 +29,7 @@ class _CommentSectionState extends State<CommentSection> {
     });
   }
 
-  void _initComments(eventData) {
+  Future<void> _initComments(eventData) async {
     List<CommentDTO> comments = [];
     if (eventData != null) {
       try {
@@ -38,7 +38,7 @@ class _CommentSectionState extends State<CommentSection> {
           value['key'] = key;
           comments.add(CommentDTO.fromSnapshot(value));
         });
-        _getCommentsData(comments);
+        await _getCommentsData(comments);
       } catch (e) {
         if (kDebugMode) {
           print(e);
@@ -47,19 +47,17 @@ class _CommentSectionState extends State<CommentSection> {
     }
   }
 
-  void _getCommentsData(List<CommentDTO> comments) {
+  Future<void> _getCommentsData(List<CommentDTO> comments) async {
     for (var element in comments) {
-      print('users/${element.userID}');
-      _dbRef
+      await _dbRef
           .child('users/${element.userID}')
           .once()
           .then((DatabaseEvent event) {
-        if (event.snapshot.value == null) {
-          return;
+        if (event.snapshot.value != null) {
+          Map data = event.snapshot.value as Map;
+          data['key'] = event.snapshot.key;
+          element.addData(data);
         }
-        Map data = event.snapshot.value as Map;
-        data['key'] = event.snapshot.key;
-        element.addData(data);
       });
     }
     comments.sort((a, b) => b.time.compareTo(a.time));
@@ -80,19 +78,25 @@ class _CommentSectionState extends State<CommentSection> {
     );
   }
 
-  Widget _buildTitleLine(String author, String avatar, int time) {
+  Widget _buildTitleLine(
+      {required String userID,
+      required String author,
+      required String avatar,
+      required int time}) {
     return Row(
       children: [
         GestureDetector(
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => Person(
-                  userID: author,
+            if (userID != Auth().currentUser!.uid) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Person(
+                    userID: userID,
+                  ),
                 ),
-              ),
-            );
+              );
+            }
           },
           child: CircleAvatar(
             backgroundColor: Colors.white30,
@@ -103,7 +107,7 @@ class _CommentSectionState extends State<CommentSection> {
         SizedBox(
           width: 200,
           child: Text(
-            author,
+            _getAuthorName(author),
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               fontWeight: FontWeight.bold,
@@ -115,8 +119,13 @@ class _CommentSectionState extends State<CommentSection> {
     );
   }
 
-  Widget _buildCommentContainer(String userID, String key, String author,
-      String commentText, String avatar, int time) {
+  Widget _buildCommentContainer(
+      {required String userID,
+      required String key,
+      required String author,
+      required String commentText,
+      required String avatar,
+      required int time}) {
     return Container(
       constraints: const BoxConstraints(minHeight: 100),
       margin: const EdgeInsets.symmetric(vertical: 10),
@@ -131,11 +140,12 @@ class _CommentSectionState extends State<CommentSection> {
                 _deleteComment(key);
               }
             },
-            title: _buildTitleLine(author, avatar, time),
+            title: _buildTitleLine(
+                userID: userID, author: author, avatar: avatar, time: time),
             subtitle: Container(
               width: double.infinity,
               alignment: Alignment.bottomLeft,
-              margin: const EdgeInsets.only(top: 15),
+              margin: const EdgeInsets.only(top: 15, left: 13.0),
               child: Text(commentText),
             )),
       ),
@@ -172,6 +182,13 @@ class _CommentSectionState extends State<CommentSection> {
     );
   }
 
+  String _getAuthorName(String author) {
+    if (author == '' || author == ' ') {
+      return 'Anonymous';
+    }
+    return author;
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_comments.isEmpty) {
@@ -185,13 +202,12 @@ class _CommentSectionState extends State<CommentSection> {
           itemCount: _comments.length,
           itemBuilder: (BuildContext context, int index) {
             return _buildCommentContainer(
-              _comments[index].userID,
-              _comments[index].key,
-              _comments[index].name ?? 'Anonymous',
-              _comments[index].body,
-              _comments[index].avatar ??
-                  'At this point they all should have an avatar',
-              _comments[index].time,
+              userID: _comments[index].userID,
+              key: _comments[index].key,
+              author: _comments[index].name ?? "Anonymous",
+              commentText: _comments[index].body,
+              avatar: _comments[index].avatar ?? _comments[index].userID,
+              time: _comments[index].time,
             );
           },
         ));
