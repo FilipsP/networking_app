@@ -26,7 +26,7 @@ class _SettingsInputsState extends State<SettingsInputs> {
     super.initState();
     _name = widget.personalData.name;
     _aboutMe = widget.personalData.bio;
-    _major = widget.personalData.major ?? ' ';
+    _major = widget.personalData.major;
     _contactList = widget.personalData.contactList ?? [];
   }
 

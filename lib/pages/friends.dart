@@ -28,17 +28,24 @@ class _FriendsState extends State<Friends> {
   @override
   void initState() {
     super.initState();
-    _friendsRef.once().then((DatabaseEvent event) {
-      if (event.snapshot.value == null) {
-        return;
+    _getKeys();
+  }
+
+  _getKeys() async {
+    List<String> keys = [];
+    await _friendsRef.once().then((DatabaseEvent event) {
+      if (event.snapshot.value != null) {
+        Map data = event.snapshot.value as Map;
+        data.forEach((key, value) {
+          keys.add(key);
+        });
       }
-      Map<dynamic, dynamic> data = event.snapshot.value as Map;
-      List<String> keys = data.keys.cast<String>().toList();
-      _getFriends(keys);
     });
+    _getFriends(keys);
   }
 
   Future<void> _getFriends(keys) async {
+    _friends.clear();
     for (String key in keys) {
       _dbRef.child('users/$key').once().then((DatabaseEvent event) {
         if (event.snapshot.value == null) {
@@ -74,7 +81,7 @@ class _FriendsState extends State<Friends> {
               userID: _filteredFriends[index].key,
             ),
           ),
-        );
+        ).then((value) => _getKeys());
       },
     );
   }

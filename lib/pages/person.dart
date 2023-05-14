@@ -178,7 +178,7 @@ class _PersonState extends State<Person> {
             : const Text("User not found"),
         ElevatedButton(
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.of(context).pop();
           },
           child: const Text('Back'),
         ),

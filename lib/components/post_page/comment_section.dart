@@ -69,8 +69,28 @@ class _CommentSectionState extends State<CommentSection> {
   }
 
   Widget _daysBeforeNow(int time) {
+    int days = DateTime.now()
+        .difference(DateTime.fromMillisecondsSinceEpoch(time))
+        .inDays;
+    if (days == 0) {
+      return const Text(
+        'Today',
+        style: TextStyle(
+          fontSize: 12,
+          color: Colors.grey,
+        ),
+      );
+    } else if (days == 1) {
+      return const Text(
+        'Yesterday',
+        style: TextStyle(
+          fontSize: 12,
+          color: Colors.grey,
+        ),
+      );
+    }
     return Text(
-      '${DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(time)).inDays}d ago',
+      '$days days ago',
       style: const TextStyle(
         fontSize: 12,
         color: Colors.grey,
@@ -105,7 +125,6 @@ class _CommentSectionState extends State<CommentSection> {
         ),
         const SizedBox(width: 10),
         SizedBox(
-          width: 200,
           child: Text(
             _getAuthorName(author),
             overflow: TextOverflow.ellipsis,
@@ -114,6 +133,7 @@ class _CommentSectionState extends State<CommentSection> {
             ),
           ),
         ),
+        const Spacer(),
         _daysBeforeNow(time),
       ],
     );
