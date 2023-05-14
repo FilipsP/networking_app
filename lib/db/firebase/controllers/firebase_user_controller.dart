@@ -71,4 +71,10 @@ class FirebaseUserController {
 
     return FirebaseDatabase.instance.ref().update(updates);
   }
+
+  Future<void> updatePersonData(Map data) async {
+    for (String key in data.keys) {
+      ref.child('users/${Auth().currentUser!.uid}/$key').set(data[key]);
+    }
+  }
 }

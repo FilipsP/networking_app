@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:networking_app/components/settings_page/settings_inputs.dart';
 import 'package:networking_app/db/dto/person_dto.dart';
 import 'package:random_avatar/random_avatar.dart';
 
+import '../auth/auth.dart';
+
 class ProfileSettings extends StatefulWidget {
-  //const ProfileSettings({Key? key}) : super(key: key);
+  final PersonDTO personalData;
   const ProfileSettings({Key? key, required this.personalData})
       : super(key: key);
-  final PersonDTO? personalData;
 
   @override
   State<ProfileSettings> createState() => _ProfileSettingsState();
 }
 
 class _ProfileSettingsState extends State<ProfileSettings> {
-  String _image = 'https://static.thenounproject.com/png/2643408-200.png';
-  bool _isDefaultAvatar = true;
+  String? _image;
   @override
   void initState() {
     super.initState();
@@ -22,10 +23,13 @@ class _ProfileSettingsState extends State<ProfileSettings> {
   }
 
   void _handleAvatarInit() {
-    if (widget.personalData?.avatar != '') {
-      _image = widget.personalData!.avatar!;
+    if (widget.personalData.avatar != '' &&
+        widget.personalData.avatar != null &&
+        widget.personalData.avatar != ' ') {
+      _image = widget.personalData.avatar!;
+    } else {
+      _image = Auth().currentUser!.uid;
     }
-    //_image = widget.image;
   }
 
   Widget _avatar() {
@@ -38,7 +42,10 @@ class _ProfileSettingsState extends State<ProfileSettings> {
           context: context,
           builder: (context) => _selectAvatarDialog(),
         ),
-        child: _buildAvatarImage(),
+        child: CircleAvatar(
+          radius: 50,
+          child: RandomAvatar(_image!),
+        ),
       ),
     );
   }
@@ -98,22 +105,9 @@ class _ProfileSettingsState extends State<ProfileSettings> {
   }
 
   void _handleAvatarPick(seed) {
-    if (_isDefaultAvatar) {
-      _isDefaultAvatar = false;
-    }
     setState(() {
       _image = seed;
     });
-  }
-
-  Widget _buildAvatarImage() {
-    if (widget.personalData!.avatar! != '' || !_isDefaultAvatar) {
-      return CircleAvatar(radius: 50, child: RandomAvatar(_image));
-    }
-    return CircleAvatar(
-      radius: 50,
-      backgroundImage: NetworkImage(_image),
-    );
   }
 
   @override
@@ -122,9 +116,15 @@ class _ProfileSettingsState extends State<ProfileSettings> {
       appBar: AppBar(
         title: const Text('Profile Settings'),
       ),
-      body: Center(
+      body: SingleChildScrollView(
         child: Column(
-          children: [_avatar()],
+          children: [
+            _avatar(),
+            SettingsInputs(
+              personalData: widget.personalData,
+              seed: _image!,
+            ),
+          ],
         ),
       ),
     );

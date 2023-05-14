@@ -86,6 +86,22 @@ class _PostPageState extends State<PostPage> {
     );
   }
 
+  Widget _buildCommentButton() {
+    if (Auth().currentUser?.isAnonymous ?? false) {
+      return Container();
+    }
+    return IconButton(
+        onPressed: () {
+          setState(() {
+            _isCommentInputOpen = !_isCommentInputOpen;
+          });
+        },
+        icon: const Icon(
+          Icons.comment,
+          color: Colors.grey,
+        ));
+  }
+
   Widget _buildLikes(int likes) {
     return Row(
       children: [
@@ -101,16 +117,7 @@ class _PostPageState extends State<PostPage> {
           color: _likeButtonColor,
           icon: const Icon(Icons.thumb_up),
         ),
-        IconButton(
-            onPressed: () {
-              setState(() {
-                _isCommentInputOpen = !_isCommentInputOpen;
-              });
-            },
-            icon: const Icon(
-              Icons.comment,
-              color: Colors.grey,
-            )),
+        _buildCommentButton(),
       ],
     );
   }

@@ -1,5 +1,3 @@
-import 'package:firebase_database/firebase_database.dart';
-
 class CommentDTO {
   String key;
   String userID;
@@ -24,6 +22,6 @@ class CommentDTO {
 
   void addData(data) {
     name = data['name'];
-    avatar = data['avatar'];
+    avatar = data['avatarURL'];
   }
 }

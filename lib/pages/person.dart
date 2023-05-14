@@ -1,6 +1,6 @@
-import 'dart:math';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:networking_app/components/contacts.dart';
 import 'package:random_avatar/random_avatar.dart';
 import '../db/dto/person_dto.dart';
 import '../db/firebase/controllers/firebase_user_controller.dart';
@@ -63,50 +63,6 @@ class _PersonState extends State<Person> {
     });
   }
 
-  Widget _contacts() {
-    List<dynamic>? contacts = _personData?.contactList;
-    if (contacts == null) {
-      return const SizedBox.shrink();
-    }
-    return Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Contacts:',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
-            ),
-            for (Map contact in contacts)
-              Padding(
-                padding: const EdgeInsets.only(top: 5.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 5),
-                      child: contact['icon'],
-                    ),
-                    TextButton(
-                      style: TextButton.styleFrom(
-                        textStyle: const TextStyle(
-                          fontSize: 15,
-                        ),
-                      ),
-                      onPressed: () => contact['callback'](contact['value']),
-                      child: Text(contact['value']),
-                    ),
-                  ],
-                ),
-              ),
-          ],
-        ));
-  }
-
   // * Avatar
   Widget _avatar() {
     return Padding(
@@ -118,7 +74,7 @@ class _PersonState extends State<Person> {
         child: CircleAvatar(
           backgroundColor: Colors.grey[700],
           child: RandomAvatar(
-            _getURL(_personData?.avatar),
+            _getAvatarSeed(_personData?.avatar, _personData?.email),
             trBackground: _transparentBg,
           ),
         ),
@@ -222,7 +178,7 @@ class _PersonState extends State<Person> {
             : const Text("User not found"),
         ElevatedButton(
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.of(context).pop();
           },
           child: const Text('Back'),
         ),
@@ -230,9 +186,9 @@ class _PersonState extends State<Person> {
     );
   }
 
-  String _getURL(avatar) {
+  String _getAvatarSeed(avatar, email) {
     if (avatar == null || avatar.isEmpty || avatar == ' ') {
-      return 'random avatar url';
+      return email ?? 'Should not be empty or null by now';
     }
     return avatar;
   }
@@ -279,7 +235,7 @@ class _PersonState extends State<Person> {
                 _userName(),
                 _buildActionButton(),
                 _bioCard(),
-                _contacts(),
+                Contacts(contacts: _personData?.contactList ?? []),
               ],
             ),
           ),

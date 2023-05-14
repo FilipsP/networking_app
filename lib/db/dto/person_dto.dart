@@ -10,16 +10,20 @@ class PersonDTO {
   final int registrationTime;
   final String key;
   final Map? contact;
+  final List? posts;
+  final Map? friends;
 
   PersonDTO(
       {required this.name,
       this.contact,
+      this.posts,
       required this.bio,
       required this.avatar,
       required this.email,
       required this.major,
       required this.registrationTime,
-      required this.key});
+      required this.key,
+      this.friends});
 
   factory PersonDTO.fromSnapshot(data) {
     return PersonDTO(
@@ -50,7 +54,7 @@ class PersonDTO {
       case 'email':
         return (String text) => Clipboard.setData(ClipboardData(text: text));
       default:
-        return () => null;
+        return;
     }
   }
 
@@ -73,8 +77,13 @@ class PersonDTO {
   Map<String, dynamic> toJson() {
     return {
       'name': name,
-      'description': bio,
+      'bio': bio,
       'avatar': avatar,
+      'email': email,
+      'major': major,
+      'registrationTime': registrationTime,
+      'key': key,
+      'contact': contact,
     };
   }
 }

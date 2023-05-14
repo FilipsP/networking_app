@@ -39,19 +39,18 @@ class _ProfileState extends State<Profile> {
           width: 100,
           height: 100,
           decoration: const BoxDecoration(shape: BoxShape.circle),
-          child: _buildAvatarImage()),
+          child: CircleAvatar(
+              radius: 50,
+              child: RandomAvatar(_getAvatarSeed(_personalData!.avatar)))),
     );
   }
 
-  Widget _buildAvatarImage() {
-    if (_personalData?.avatar != '') {
-      return CircleAvatar(
-          radius: 50, child: RandomAvatar(_personalData!.avatar!));
+  String _getAvatarSeed(avatar) {
+    if (avatar != null && avatar != '' && avatar != ' ') {
+      return _personalData!.avatar!;
+    } else {
+      return Auth().currentUser!.uid;
     }
-    return CircleAvatar(
-      radius: 50,
-      backgroundImage: NetworkImage(_imageString()),
-    );
   }
 
 // * User Name
@@ -74,13 +73,14 @@ class _ProfileState extends State<Profile> {
           color: Colors.black,
           iconSize: 30,
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) =>
-                    ProfileSettings(personalData: _personalData),
-              ),
-            );
+            if (_personalData != null) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        ProfileSettings(personalData: _personalData!)),
+              ).then((value) => _getPersonalData());
+            }
           }, // edit profile img and bio (open window on top to change?)
         ),
       ],
@@ -135,13 +135,6 @@ class _ProfileState extends State<Profile> {
             )),
       ),
     );
-  }
-
-  String _imageString() {
-    if (_personalData?.avatar == '') {
-      return "https://ui-avatars.com/api/?name=${_personalData?.name}&size=256";
-    }
-    return "https://static.thenounproject.com/png/2643408-200.png";
   }
 
   @override
