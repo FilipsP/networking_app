@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:networking_app/auth/auth.dart';
+import 'package:networking_app/components/post_page/comment_input.dart';
+import 'package:networking_app/components/post_page/comment_section.dart';
 import 'package:networking_app/pages/person.dart';
 import '../db/firebase/controllers/firebase_posts_controller.dart';
 
@@ -20,6 +22,7 @@ class PostPage extends StatefulWidget {
 
 class _PostPageState extends State<PostPage> {
   bool _isUsersPost = false;
+  bool _isCommentInputOpen = false;
   Color _likeButtonColor = Colors.grey;
   // Color _favoriteButtonColor = Colors.grey;
 
@@ -32,7 +35,7 @@ class _PostPageState extends State<PostPage> {
       if (widget.post['likedBy'] != null) {
         _likeButtonColor =
             widget.post['likedBy'][Auth().currentUser!.uid] != null
-                ? Colors.blue
+                ? Colors.deepPurpleAccent
                 : Colors.grey;
       }
     });
@@ -98,6 +101,16 @@ class _PostPageState extends State<PostPage> {
           color: _likeButtonColor,
           icon: const Icon(Icons.thumb_up),
         ),
+        IconButton(
+            onPressed: () {
+              setState(() {
+                _isCommentInputOpen = !_isCommentInputOpen;
+              });
+            },
+            icon: const Icon(
+              Icons.comment,
+              color: Colors.grey,
+            )),
       ],
     );
   }
@@ -148,7 +161,7 @@ class _PostPageState extends State<PostPage> {
     //TODO: Implement liking a post and saving it to firebase
     setState(() {
       if (_likeButtonColor == Colors.grey) {
-        _likeButtonColor = Colors.blue;
+        _likeButtonColor = Colors.deepPurpleAccent;
         FirebasePostsController().likePost(widget.postKey);
         widget.post['likes']++;
       } else {
@@ -209,7 +222,7 @@ class _PostPageState extends State<PostPage> {
       context,
       MaterialPageRoute(
         //TODO: Only give a uid, data will be fetched inside person page
-        builder: (context) => Person(authorId: widget.post['authorId']),
+        builder: (context) => Person(userID: widget.post['authorId']),
       ),
     );
   }
@@ -217,39 +230,56 @@ class _PostPageState extends State<PostPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppBar(),
-      body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.post['title'],
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 30.0,
+        appBar: _buildAppBar(),
+        floatingActionButton: _isCommentInputOpen
+            ? CommentInput(
+                postKey: widget.postKey,
+              )
+            : Container(),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        body: GestureDetector(
+            onTap: () {
+              FocusScope.of(context).unfocus();
+              setState(() {
+                _isCommentInputOpen = false;
+              });
+            },
+            child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.post['title'],
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 30.0,
+                        ),
+                      ),
+                      const SizedBox(height: 8.0),
+                      _buildPostTime(widget.post['time']),
+                      const SizedBox(height: 16.0),
+                      Text(
+                        widget.post['body'].replaceAll('\\n', '\n'),
+                        softWrap: true,
+                        style: const TextStyle(
+                          fontSize: 20.0,
+                        ),
+                      ),
+                      const SizedBox(height: 16.0),
+                      _buildEventTime(widget.post['eventTime']),
+                      const SizedBox(height: 8.0),
+                      _buildLikes(widget.post['likes']),
+                      const SizedBox(height: 8.0),
+                      _buildTags(widget.post['tags']),
+                      const Divider(
+                        thickness: 2.0,
+                      ),
+                      CommentSection(postId: widget.postKey),
+                    ],
                   ),
-                ),
-                const SizedBox(height: 8.0),
-                _buildPostTime(widget.post['time']),
-                const SizedBox(height: 16.0),
-                Text(
-                  widget.post['body'].replaceAll('\\n', '\n'),
-                  softWrap: true,
-                  style: const TextStyle(
-                    fontSize: 20.0,
-                  ),
-                ),
-                const SizedBox(height: 16.0),
-                _buildEventTime(widget.post['eventTime']),
-                const SizedBox(height: 8.0),
-                _buildLikes(widget.post['likes']),
-                const SizedBox(height: 8.0),
-                _buildTags(widget.post['tags']),
-              ],
-            ),
-          )),
-    );
+                ))));
   }
 }

@@ -63,7 +63,7 @@ class FirebaseUserController {
       "posts": [],
       "major": "",
       "bio": "",
-      "avatarURL": ""
+      "avatarURL": email + DateTime.now().millisecondsSinceEpoch.toString(),
     };
 
     final Map<String, Map> updates = {};

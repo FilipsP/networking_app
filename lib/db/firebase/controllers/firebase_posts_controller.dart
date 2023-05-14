@@ -47,4 +47,29 @@ class FirebasePostsController {
     //TODO: Add an extra check to make sure the user is the author of the post
     return FirebaseDatabase.instance.ref().child('posts').child(key).remove();
   }
+
+  Future<void> addComment(String postKey, String body) async {
+    final Map<String, dynamic> commentData = {
+      'userID': Auth().currentUser!.uid,
+      'body': body,
+      'time': DateTime.now().millisecondsSinceEpoch,
+    };
+    newKey() {
+      return ref.child('posts/$postKey/comments').push().key;
+    }
+
+    final Map<String, Map> updates = {};
+    updates['/posts/$postKey/comments/${newKey()}'] = commentData;
+    return FirebaseDatabase.instance.ref().update(updates);
+  }
+
+  Future<void> deleteComment(String postKey, String commentKey) async {
+    return FirebaseDatabase.instance
+        .ref()
+        .child('posts')
+        .child(postKey)
+        .child('comments')
+        .child(commentKey)
+        .remove();
+  }
 }

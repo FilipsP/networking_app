@@ -2,6 +2,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:networking_app/components/search_bar.dart';
 import 'package:networking_app/pages/person.dart';
+import 'package:random_avatar/random_avatar.dart';
 import '../auth/auth.dart';
 import '../auth/components/sign_in_register.dart';
 import '../db/dto/person_dto.dart';
@@ -58,8 +59,9 @@ class _FriendsState extends State<Friends> {
       key: Key(_filteredFriends[index].key.toString()),
       leading: CircleAvatar(
         backgroundColor: Colors.grey[300],
-        backgroundImage: NetworkImage(_getURL(
-            _filteredFriends[index].avatar, _filteredFriends[index].name)),
+        child: RandomAvatar(
+          _getURL(_filteredFriends[index].avatar),
+        ),
       ),
       title: Text(_filteredFriends[index].name),
       subtitle: Text(_filteredFriends[index].bio),
@@ -68,7 +70,7 @@ class _FriendsState extends State<Friends> {
           context,
           MaterialPageRoute(
             builder: (context) => Person(
-              authorId: _filteredFriends[index].key.toString(),
+              userID: _filteredFriends[index].key.toString(),
             ),
           ),
         );
@@ -90,9 +92,9 @@ class _FriendsState extends State<Friends> {
         ));
   }
 
-  String _getURL(String? avatar, String name) {
+  String _getURL(avatar) {
     if (avatar == null || avatar.isEmpty || avatar == ' ') {
-      return "https://ui-avatars.com/api/?name=$name";
+      return 'random avatar url';
     }
     return avatar;
   }
@@ -208,6 +210,7 @@ class _FriendsState extends State<Friends> {
                 if (_isLookingForNewFriends) _searchButton(),
                 Expanded(
                   child: ListView.builder(
+                    shrinkWrap: true,
                     itemCount: _filteredFriends.length,
                     itemBuilder: (context, index) {
                       return _friendsList(index);
