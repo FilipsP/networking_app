@@ -60,7 +60,8 @@ class _FriendsState extends State<Friends> {
       leading: CircleAvatar(
         backgroundColor: Colors.grey[300],
         child: RandomAvatar(
-          _getURL(_filteredFriends[index].avatar),
+          _getAvatarSeed(
+              _filteredFriends[index].avatar, _filteredFriends[index].key),
         ),
       ),
       title: Text(_filteredFriends[index].name),
@@ -70,7 +71,7 @@ class _FriendsState extends State<Friends> {
           context,
           MaterialPageRoute(
             builder: (context) => Person(
-              userID: _filteredFriends[index].key.toString(),
+              userID: _filteredFriends[index].key,
             ),
           ),
         );
@@ -92,9 +93,9 @@ class _FriendsState extends State<Friends> {
         ));
   }
 
-  String _getURL(avatar) {
+  String _getAvatarSeed(avatar, userID) {
     if (avatar == null || avatar.isEmpty || avatar == ' ') {
-      return 'random avatar url';
+      return userID;
     }
     return avatar;
   }
