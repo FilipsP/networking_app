@@ -7,9 +7,11 @@ Our goal is to be lightweight, flexible, easy to use but to provide all necessar
 
 <img src="https://github.com/FilipsP/networking_app/assets/90237423/8ee6ff58-3f48-481f-822e-aaedae49b4ae" width="30%"></img> <img src="https://github.com/FilipsP/networking_app/assets/90237423/057c71a1-64b4-4d45-947a-08ebf672e54a" width="30%"></img> <img src="https://github.com/FilipsP/networking_app/assets/90237423/907506e3-4b0e-4e5d-9a0e-15fd28473d8d" width="30%"></img> <img src="https://github.com/FilipsP/networking_app/assets/90237423/71b4d53f-aff9-4826-aba0-632536f7bfcc" width="30%"></img> <img src="https://github.com/FilipsP/networking_app/assets/90237423/57695df1-b80d-4f1f-ba1c-0572086ce9b4" width="30%"></img> <img src="https://github.com/FilipsP/networking_app/assets/90237423/ea74c2c7-de40-4c8d-9314-032f4c9247e4" width="30%"></img> <img src="https://github.com/FilipsP/networking_app/assets/90237423/7a81a37b-5a1e-41f6-afc0-3c6f0a4145d3" width="30%"></img> <img src="https://github.com/FilipsP/networking_app/assets/90237423/b1a3d15c-0884-4b45-8be0-a35533dfcae4" width="30%"></img> <img src="https://github.com/FilipsP/networking_app/assets/90237423/7a94f17d-7b4d-4cef-a167-3108e2e57239" width="30%"></img> 
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
+- School and life related posts creation and view
+- Networking
+- Profile customization and generated avatars
 
 ## SDK
 
