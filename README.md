@@ -5,10 +5,7 @@ Our goal is to be lightweight, flexible, easy to use but to provide all necessar
 
 ## Screenshots
 
-<img src="https://user-images.githubusercontent.com/90237423/236831350-db6f081f-7bfd-4410-8247-eacb41ff23d2.png" width="23%"></img> <img src="https://user-images.githubusercontent.com/90237423/236832103-2032a303-31dc-4c04-9e4c-3d72ce66518a.png" width="23%"></img> <img src="https://user-images.githubusercontent.com/90237423/236831480-1c66bd85-9a4e-428a-b992-31be43756113.png" width="23%"></img> <img src="https://user-images.githubusercontent.com/90237423/236831539-6c3dfa9c-afb5-424f-8f09-8a7f596cbd2b.png" width="23%"></img> <img src="https://user-images.githubusercontent.com/90237423/236831657-b1df51a3-ea79-4003-a948-523fa4568c08.png" width="23%"></img> <img src="https://user-images.githubusercontent.com/90237423/236831839-9ee170f0-a67a-4e30-982a-7138c386d727.png" width="23%"></img> <img src="https://user-images.githubusercontent.com/90237423/236831913-4a6d3511-9e09-44a4-b82c-81f735790a6a.png" width="23%"></img> <img src="https://user-images.githubusercontent.com/90237423/236833462-5720a954-8abd-43dd-83f7-ded064d55ae2.png" width="23%"></img> <img src="https://user-images.githubusercontent.com/90237423/236833385-e89dffae-5673-4aa6-9b64-9a7571602408.png" width="23%"></img> 
-
-
-
+<img src="https://github.com/FilipsP/networking_app/assets/90237423/8ee6ff58-3f48-481f-822e-aaedae49b4ae" width="30%"></img> <img src="https://github.com/FilipsP/networking_app/assets/90237423/057c71a1-64b4-4d45-947a-08ebf672e54a" width="30%"></img> <img src="https://github.com/FilipsP/networking_app/assets/90237423/907506e3-4b0e-4e5d-9a0e-15fd28473d8d" width="30%"></img> <img src="https://github.com/FilipsP/networking_app/assets/90237423/71b4d53f-aff9-4826-aba0-632536f7bfcc" width="30%"></img> <img src="https://github.com/FilipsP/networking_app/assets/90237423/57695df1-b80d-4f1f-ba1c-0572086ce9b4" width="30%"></img> <img src="https://github.com/FilipsP/networking_app/assets/90237423/ea74c2c7-de40-4c8d-9314-032f4c9247e4" width="30%"></img> <img src="https://github.com/FilipsP/networking_app/assets/90237423/7a81a37b-5a1e-41f6-afc0-3c6f0a4145d3" width="30%"></img> <img src="https://github.com/FilipsP/networking_app/assets/90237423/b1a3d15c-0884-4b45-8be0-a35533dfcae4" width="30%"></img> <img src="https://github.com/FilipsP/networking_app/assets/90237423/7a94f17d-7b4d-4cef-a167-3108e2e57239" width="30%"></img> 
 
 ## Getting Started
 
@@ -37,8 +34,6 @@ This project is a starting point for a Flutter application.
 - intl: 0.17.0
 - file_picker: 5.2.11
 
-
-
 ## Team
 
 - Filipp-Artur Pljassunov
@@ -48,8 +43,6 @@ This project is a starting point for a Flutter application.
 - Karl Piiber
 
 ## Installation guide
-
-
 
 1. Follow this [guide](https://docs.flutter.dev/get-started/editor?tab=androidstudio) to install your flutter environment
 2. Clone repository
